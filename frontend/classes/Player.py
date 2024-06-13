@@ -1,32 +1,42 @@
-from cairo import Surface
 import pygame
+from classes.Nave import Nave
 
 
 class Player():
-    def __init__(self, image):
-        self._player_og_image = image
-        self._player_image = image
+    def __init__(self):
+        self._nave = Nave()
+        self._player_image = self._nave.sprites["parado"]
         self._player_pos = pygame.Vector2()
         self._player_speed = 300
         self._rotation_speed = 2.0
         self._player_angle = 0.0
-        self._player_rect = image.get_rect(center=self._player_pos)
+        self._player_rect = self._player_image.get_rect(center=self._player_pos)
 
-        # self._player_rect.center = self._player_pos
-        # self._player_sprite = nave.sprites["parado"]
+    def rotate_player(self, angle):
+        if abs(self._player_angle + angle) >= 360:
+            self._player_angle = (self._player_angle + angle) % 360
+        else:
+            self._player_angle += angle  # Update player angle
+        self._player_image = pygame.transform.rotate(self._player_image, self._player_angle)  # Rotate player sprite
+
+    def stoped(self):
+        self._player_image = self._nave.sprites["parado"]
+        self.rotate_player(0)
 
 
+    def movement(self, dt, keys):
+        if keys[pygame.K_w]:
+            self._player_image = self._nave.sprites["boost_duplo"]
+            self._player_pos.y -= 300 * dt #seno
+            # self._player_pos.x -= 300 * dt #cosseno
+        if keys[pygame.K_a]:
+            self._player_image = self._nave.sprites["boost_left"]
+            self.rotate_player(self._rotation_speed)
+        if keys[pygame.K_d]:
+            self._player_image = self._nave.sprites["boost_right"]
+            self.rotate_player(-self._rotation_speed)
+        self._player_rect.center = (self._player_pos[0] - self._player_image.get_width()/2, self._player_pos[1] - self._player_image.get_height()/2)
 
-    # def movement(self, dt):
-    #     keys = pygame.key.get_pressed()
-    #     if keys[pygame.K_w]:
-    #         self._player_pos.y -= self._player_speed * dt
-    #     if keys[pygame.K_s]:
-    #         self._player_pos.y += self._player_speed * dt
-    #     if keys[pygame.K_a]:
-    #         self.rotate_player(self._rotation_speed, "left")
-    #     if keys[pygame.K_d]:
-    #         self.rotate_player(-self._rotation_speed, "right")
 
     @property
     def player_pos(self):
@@ -35,11 +45,3 @@ class Player():
     @player_pos.setter
     def player_pos(self, novo_pos):
         self._player_pos = novo_pos
-
-    # @property
-    # def player_sprite(self):
-    #     return self._player_sprite
-
-    # @player_sprite.setter
-    # def player_sprite(self, novo_sprite):
-    #     self._player_sprite = novo_sprite
