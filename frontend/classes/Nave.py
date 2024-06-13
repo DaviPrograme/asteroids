@@ -4,8 +4,8 @@ import os
 class Nave():
     def __init__(self):
         self._path = os.path.abspath(os.path.dirname(__file__)) + "/../../frontend/sprites/nave/"
-        self._sprite = pygame.image.load(self._path + "nave_sem_boost.png").convert_alpha()
-        self.sprites = {
+        # self._sprite = pygame.image.load(self._path + "nave_sem_boost.png").convert_alpha()
+        self._sprites = {
             "parado" : pygame.image.load(self._path + "nave_sem_boost.png").convert_alpha(),
             "boost_left" : pygame.image.load(self._path + "nave_boost_left.png").convert_alpha(),
             "boost_right" : pygame.image.load(self._path + "nave_boost_right.png").convert_alpha(),
@@ -22,9 +22,9 @@ class Nave():
         }
 
     @property
-    def sprite(self):
-        return self._sprite
+    def sprites(self):
+        return self._sprites
     
-    @sprite.setter
-    def sprite(self, novo_sprite):
-        self._sprite = novo_sprite
+    # @sprites.setter
+    # def sprites(self, novo_sprite):
+    #     self.sprites = novo_sprite

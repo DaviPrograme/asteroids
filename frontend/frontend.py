@@ -1,6 +1,15 @@
 import pygame
-from classes.Nave import Nave
+import sys
+sys.path.append("../frontend")
 
+from classes.Nave import Nave
+from classes.Player import Player
+
+def rotate_player(player, angle):
+    player._player_angle += angle  # Update player angle
+    player._player_image = pygame.transform.rotate(player._player_image, player._player_angle)  # Rotate player sprite
+    
+    # player.
 if __name__ == "__main__":
 
 
@@ -14,6 +23,10 @@ if __name__ == "__main__":
 
     player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
+    player = Player(nave.sprites["parado"])
+    player.player_pos = player_pos
+    player._player_angle
+  
     while running:
         # poll for events
         # pygame.QUIT event means the user clicked X to close your window
@@ -23,19 +36,32 @@ if __name__ == "__main__":
 
         # fill the screen with a color to wipe away anything from last frame
         screen.fill(0)
-        screen.blit(nave.sprite, (0,0), (0,0, 70, 70))
+        # screen.blit(nave.sprite, (0,0), (0,0, 70, 70))
 
-        pygame.draw.circle(screen, "red", player_pos, 40)
+        # pygame.draw.circle(screen, "red", player_pos, 40)
+        
+        # screen.blit(player._player_image, player_pos)
 
         keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE]:
+            running = False
         if keys[pygame.K_w]:
+            player._player_image = nave.sprites["boost_duplo"]
             player_pos.y -= 300 * dt
         if keys[pygame.K_s]:
-            player_pos.y += 300 * dt
+            pass
+            # player_pos.y += 300 * dt
         if keys[pygame.K_a]:
-            player_pos.x -= 300 * dt
+            player._player_image = nave.sprites["boost_left"]
+            rotate_player(player, player._rotation_speed)
         if keys[pygame.K_d]:
-            player_pos.x += 300 * dt
+            player._player_image = nave.sprites["boost_right"]
+            rotate_player(player, -player._rotation_speed)
+
+        player._player_rect.center = player_pos
+
+        # Blit the rotated image
+        screen.blit(player._player_image, player._player_rect)
 
         # flip() the display to put your work on screen
         pygame.display.flip()
