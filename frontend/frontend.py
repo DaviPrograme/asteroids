@@ -47,7 +47,7 @@ if __name__ == "__main__":
             running = False
         if keys[pygame.K_w]:
             player._player_image = nave.sprites["boost_duplo"]
-            player_pos.y -= 300 * dt
+            player._player_pos.y -= 300 * dt
         if keys[pygame.K_s]:
             pass
             # player_pos.y += 300 * dt
@@ -58,10 +58,9 @@ if __name__ == "__main__":
             player._player_image = nave.sprites["boost_right"]
             rotate_player(player, -player._rotation_speed)
 
-        player._player_rect.center = player_pos
-
+        player._player_rect.center = (player._player_pos[0]-player._player_image.get_width()/2, player._player_pos[1]-player._player_image.get_height()/2)
         # Blit the rotated image
-        screen.blit(player._player_image, player._player_rect)
+        screen.blit(player._player_image, player._player_rect.center)
 
         # flip() the display to put your work on screen
         pygame.display.flip()
