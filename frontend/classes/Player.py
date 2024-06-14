@@ -1,3 +1,4 @@
+from math import cos, radians, sin
 import pygame
 from classes.Nave import Nave
 
@@ -9,7 +10,7 @@ class Player():
         self._player_pos = pygame.Vector2()
         self._player_speed = 300
         self._rotation_speed = 2.0
-        self._player_angle = 0.0
+        self._player_angle = 90.0
         self._player_rect = self._player_image.get_rect(center=self._player_pos)
 
     def rotate_player(self, angle):
@@ -27,8 +28,11 @@ class Player():
     def movement(self, dt, keys):
         if keys[pygame.K_w]:
             self._player_image = self._nave.sprites["boost_duplo"]
-            self._player_pos.y -= 300 * dt #seno
-            # self._player_pos.x -= 300 * dt #cosseno
+            self.rotate_player(0)
+            move_ang = radians(self._player_angle)
+            self._player_pos.y -= self._player_speed * sin(move_ang) * dt
+            self._player_pos.x += self._player_speed * cos(move_ang) * dt
+            print(self._player_angle)
         if keys[pygame.K_a]:
             self._player_image = self._nave.sprites["boost_left"]
             self.rotate_player(self._rotation_speed)
