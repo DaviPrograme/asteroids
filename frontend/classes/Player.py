@@ -1,4 +1,3 @@
-from logging.handlers import RotatingFileHandler
 from math import cos, radians, sin
 import pygame
 from classes.Nave import Nave
@@ -17,6 +16,8 @@ class Player():
         self._frame_counter = 0
         self._current_time = 0
         self._animation_time = 0.095
+        self.death = False
+        self.radius = 35
 
 
     def rotate_player(self, angle):
@@ -52,7 +53,7 @@ class Player():
             self._frame_counter = (self._frame_counter + 1 ) % len(self._nave.sprites["explosao"])
         self._player_image = self._nave.sprites["explosao"][self._frame_counter]
         self.rotate_player(0)
-        # self._current_frame = (self._current_frame + 1) % len(self._nave.sprites["explosao"])
+        self.death = True
 
     @property
     def player_pos(self):
