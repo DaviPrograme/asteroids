@@ -21,7 +21,7 @@ class Player():
         self._player_image = pygame.transform.rotate(self._player_image, self._player_angle)  # Rotate player sprite
 
     def stoped(self):
-        self._player_image = self._nave.sprites["parado"]
+        self._player_image = self._nave.sprites["parado90"]
         self.rotate_player(0)
 
 
@@ -34,10 +34,10 @@ class Player():
             self._player_pos.x += self._player_speed * cos(move_ang) * dt
             print(self._player_angle)
         if keys[pygame.K_a]:
-            self._player_image = self._nave.sprites["boost_left"]
+            self._player_image = self._nave.sprites["boost_right"]
             self.rotate_player(self._rotation_speed)
         if keys[pygame.K_d]:
-            self._player_image = self._nave.sprites["boost_right"]
+            self._player_image = self._nave.sprites["boost_left"]
             self.rotate_player(-self._rotation_speed)
         self._player_rect.center = (self._player_pos[0] - self._player_image.get_width()/2, self._player_pos[1] - self._player_image.get_height()/2)
 
