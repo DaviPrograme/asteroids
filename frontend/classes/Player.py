@@ -3,15 +3,17 @@ import pygame
 from classes.Nave import Nave
 
 
-class Player():
+class Player(pygame.sprite.Sprite):
     def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
         self._nave = Nave()
         self._player_image = self._nave.sprites["parado"]
+        self.mask = pygame.mask.from_surface(self._player_image)
         self._player_pos = pygame.Vector2()
         self._player_speed = 300
         self._rotation_speed = 2.0
         self._player_angle = 90.0
-        self._player_rect = self._player_image.get_rect(center=self._player_pos)
+        self.rect = self._player_image.get_rect(center=self._player_pos)
         self._current_frame = 0
         self._frame_counter = 0
         self._current_time = 0
@@ -44,16 +46,21 @@ class Player():
         if keys[pygame.K_d]:
             self._player_image = self._nave.sprites["boost_left"]
             self.rotate_player(-self._rotation_speed)
-        self._player_rect.center = (self._player_pos[0] - self._player_image.get_width()/2, self._player_pos[1] - self._player_image.get_height()/2)
+        self.rect.center = (self._player_pos[0] - self._player_image.get_width()/2, self._player_pos[1] - self._player_image.get_height()/2)
 
     def explode(self, dt):
         self._current_time += dt
         if self._current_time >= self._animation_time:
             self._current_time = 0
-            self._frame_counter = (self._frame_counter + 1 ) % len(self._nave.sprites["explosao"])
-        self._player_image = self._nave.sprites["explosao"][self._frame_counter]
-        self.rotate_player(0)
-        self.death = True
+            self._frame_counter = (self._frame_counter + 1 )
+        try:
+            self._player_image = self._nave.sprites["explosao"][self._frame_counter]
+            self.rotate_player(0)
+            self.death = True
+            return True
+        except:
+            pass
+        return False
 
     @property
     def player_pos(self):
