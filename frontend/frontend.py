@@ -1,3 +1,4 @@
+from math import sin, cos, radians
 import pygame
 from classes.Player import Bullet, Player
     
@@ -26,16 +27,19 @@ if __name__ == "__main__":
                 if event.key == pygame.K_ESCAPE:
                     running = False
                 if event.key == pygame.K_SPACE:
-                    Bullet.load_bullet(player._player_pos, player._player_angle, dt)
+                    off_x = cos(radians(player._player_angle)) * player._player_image.get_width() /2
+                    off_y = sin(radians(player._player_angle)) * player._player_image.get_height() /2
+                    new_pos = pygame.Vector2(player._player_pos.x + off_x, player._player_pos.y + off_y)
+                    Bullet.load_bullet(new_pos, player._player_angle, dt)
+                    print(len(Bullet.bullets))
 
         # fill the screen with a color to wipe away anything from last frame
         screen.fill(0)
         keys = pygame.key.get_pressed()
         player.movement(dt, keys)
-
         Bullet.update_bullets(dt)
         for bullet in Bullet.bullets:
-            screen.blit(bullet._bullet_image, bullet._bullet_pos)
+            screen.blit(bullet._bullet_image, bullet._bullet_rect.center)
         # Blit the rotated image
         screen.blit(player._player_image, player._player_rect.center)
         # flip() the display to put your work on screen
