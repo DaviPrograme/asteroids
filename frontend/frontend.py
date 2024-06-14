@@ -1,7 +1,5 @@
 import pygame
-import sys
-from classes.Player import Player
-
+from classes.Player import Bullet, Player
     
 if __name__ == "__main__":
 
@@ -16,7 +14,6 @@ if __name__ == "__main__":
     player.player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
     player._player_angle
-  
     while running:
         # poll for events
         # pygame.QUIT event means the user clicked X to close your window
@@ -25,17 +22,22 @@ if __name__ == "__main__":
                 running = False
             if event.type == pygame.KEYUP:
                 player.stoped()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                if event.key == pygame.K_SPACE:
+                    Bullet.load_bullet(player._player_pos, player._player_angle, dt)
 
         # fill the screen with a color to wipe away anything from last frame
         screen.fill(0)
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_ESCAPE]:
-            running = False
-
         player.movement(dt, keys)
+
+        Bullet.update_bullets(dt)
+        for bullet in Bullet.bullets:
+            screen.blit(bullet._bullet_image, bullet._bullet_pos)
         # Blit the rotated image
         screen.blit(player._player_image, player._player_rect.center)
-
         # flip() the display to put your work on screen
         pygame.display.flip()
 

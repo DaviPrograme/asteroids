@@ -14,10 +14,9 @@ class Player():
         self._player_rect = self._player_image.get_rect(center=self._player_pos)
 
     def rotate_player(self, angle):
-        if abs(self._player_angle + angle) >= 360:
-            self._player_angle = (self._player_angle + angle) % 360
-        else:
-            self._player_angle += angle  # Update player angle
+        self._player_angle += angle  # Update player angle
+        if abs(self._player_angle) >= 360:
+            self._player_angle = (self._player_angle) % 360
         self._player_image = pygame.transform.rotate(self._player_image, self._player_angle)  # Rotate player sprite
 
     def stoped(self):
@@ -32,14 +31,20 @@ class Player():
             move_ang = radians(self._player_angle)
             self._player_pos.y -= self._player_speed * sin(move_ang) * dt
             self._player_pos.x += self._player_speed * cos(move_ang) * dt
-            print(self._player_angle)
         if keys[pygame.K_a]:
             self._player_image = self._nave.sprites["boost_right"]
             self.rotate_player(self._rotation_speed)
         if keys[pygame.K_d]:
             self._player_image = self._nave.sprites["boost_left"]
             self.rotate_player(-self._rotation_speed)
+        # if keys[pygame.K_SPACE]:
+        #     Bullet.load_bullet(self._player_pos, self._player_angle, dt)
         self._player_rect.center = (self._player_pos[0] - self._player_image.get_width()/2, self._player_pos[1] - self._player_image.get_height()/2)
+
+    # def shoot(self):
+    #     gun_x = self._player_pos[0] + 10
+    #     gun_y = self._player_pos[1] + 10
+    #     self._bullets.append(Bullets(gun_x, gun_y, self._player_angle))
 
 
     @property
@@ -49,3 +54,48 @@ class Player():
     @player_pos.setter
     def player_pos(self, novo_pos):
         self._player_pos = novo_pos
+
+class Bullet():
+    bullets = []
+    def __init__(self, player_x, player_y, player_angle):
+        self._bullet_image = pygame.image.load("frontend/sprites/nave/bullet.png").convert_alpha()
+        self._bullet_pos = pygame.Vector2(player_x, player_y)
+        self._bullet_angle = player_angle
+        self._bullet_speed = 300
+        self._bullet_rect = self._bullet_image.get_rect(center=self._bullet_pos)
+    @classmethod
+    def load_bullet(cls, bullet_pos, bullet_angle, dt):
+        gun_x = bullet_pos[0]
+        gun_y = bullet_pos[1]
+        Bullet.bullets.append(Bullet(gun_x, gun_y, bullet_angle))
+        # Bullet.bullets[-1].shoot(dt)
+
+    def move(self, dt):
+        move_ang = radians(self.bullet_angle)
+        self._bullet_pos.y -= self._bullet_speed * sin(move_ang) * dt
+        self._bullet_pos.x += self._bullet_speed * cos(move_ang) * dt
+        self._bullet_rect.center = (self._bullet_pos[0] - self._bullet_image.get_width()/2, self._bullet_pos[1] - self._bullet_image.get_height()/2)
+    
+    @classmethod
+    def update_bullets(cls, dt):
+        for bullet in cls.bullets:
+            if bullet.bullet_pos[0] < 0 or bullet.bullet_pos[0] > 1280 or bullet.bullet_pos[1] < 0 or bullet.bullet_pos[1] > 720:
+                cls.bullets.remove(bullet)
+            else: 
+                bullet.move(dt)
+
+    @property
+    def bullet_pos(self):
+        return self._bullet_pos
+
+    @bullet_pos.setter
+    def bullet_pos(self, novo_pos):
+        self._bullet_pos = novo_pos
+
+    @property
+    def bullet_angle(self):
+        return self._bullet_angle
+
+    @bullet_angle.setter
+    def bullet_angle(self, novo_ang):
+        self._bullet_angle = novo_ang
