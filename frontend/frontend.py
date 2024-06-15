@@ -33,7 +33,7 @@ if __name__ == "__main__":
                 if not player.death and event.key == pygame.K_SPACE:
                     off_x = cos(radians(player._player_angle)) * player._player_image.get_width() /2
                     off_y = sin(radians(player._player_angle)) * player._player_image.get_height() /2
-                    new_pos = pygame.Vector2(player._player_pos.x + off_x, player._player_pos.y + off_y)
+                    new_pos = pygame.Vector2(player._player_pos.x + off_x, player._player_pos.y - off_y)
                     Bullet.load_bullet(new_pos, player._player_angle, dt)
 
         # fill the screen with a color to wipe away anything from last frame
