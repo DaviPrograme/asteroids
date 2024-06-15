@@ -1,15 +1,16 @@
 from math import cos, radians, sin
 import pygame
 from classes.Nave import Nave
+from classes.Bullet import Bullet
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, x_init, y_init):
         pygame.sprite.Sprite.__init__(self)
         self._nave = Nave()
         self.image = self._nave.sprites["parado"]
         self.mask = pygame.mask.from_surface(self.image)
-        self._player_pos = pygame.Vector2()
+        self._player_pos = pygame.Vector2(x_init, y_init)
         self._player_speed = 300
         self._rotation_speed = 2.0
         self._player_angle = 90.0
@@ -32,6 +33,11 @@ class Player(pygame.sprite.Sprite):
         self.image = self._nave.sprites["parado90"]
         self.rotate_player(0)
 
+    def shoot(self, dt):
+        off_x = cos(radians(self._player_angle)) * self.image.get_width() /2
+        off_y = sin(radians(self._player_angle)) * self.image.get_height() /2
+        new_pos = pygame.Vector2(self._player_pos.x + off_x, self._player_pos.y - off_y)
+        Bullet.load_bullet(new_pos, self._player_angle, dt)
 
     def movement(self, dt, keys):
         if keys[pygame.K_w]:

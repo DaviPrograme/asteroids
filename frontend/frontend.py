@@ -17,12 +17,10 @@ if __name__ == "__main__":
     running = True
     dt = 0
 
-    player = Player()
-    asteroid = Asteroid()
-    player.player_pos = pygame.Vector2(screen.width / 2, screen.height / 2)
-    player._player_angle
+    player = Player(screen.width / 2, screen.height / 2)
 
     asteroide_group = pygame.sprite.Group()
+    asteroid = Asteroid()
     asteroide_group.add(asteroid)
     while running:
         # poll for events
@@ -36,17 +34,14 @@ if __name__ == "__main__":
                 if event.key == pygame.K_ESCAPE:
                     running = False
                 if not player.death and event.key == pygame.K_SPACE:
-                    off_x = cos(radians(player._player_angle)) * player.image.get_width() /2
-                    off_y = sin(radians(player._player_angle)) * player.image.get_height() /2
-                    new_pos = pygame.Vector2(player._player_pos.x + off_x, player._player_pos.y - off_y)
-                    Bullet.load_bullet(new_pos, player._player_angle, dt)
+                    player.shoot(dt)
 
         # fill the screen with a color to wipe away anything from last frame
         keys = pygame.key.get_pressed()
-        screen.render([*Bullet.bullets, asteroid, player])
 
-        is_collision = pygame.sprite.spritecollide(player, asteroide_group, False, pygame.sprite.collide_mask)
-        if is_collision :
+        screen.render([*Bullet.bullets, asteroid, player])
+        screen.update_collisions(player, asteroide_group)
+        if screen.is_player_colided :
             player.explode(dt)
         else:
             player.movement(dt, keys)
