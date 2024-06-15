@@ -20,8 +20,10 @@ if __name__ == "__main__":
     player = Player(screen.width / 2, screen.height / 2)
 
     asteroide_group = pygame.sprite.Group()
-    asteroid = Asteroid()
-    asteroide_group.add(asteroid)
+    bullet_group = pygame.sprite.Group()
+    asteroide_group = Asteroid.asteroids
+    bullet_group = Bullet.bullets
+
     while running:
         # poll for events
         # pygame.QUIT event means the user clicked X to close your window
@@ -39,13 +41,14 @@ if __name__ == "__main__":
         # fill the screen with a color to wipe away anything from last frame
         keys = pygame.key.get_pressed()
 
-        screen.render([*Bullet.bullets, asteroid, player])
-        screen.update_collisions(player, asteroide_group)
+        screen.render([*Bullet.bullets, *Asteroid.asteroids, player])
+        screen.update_collisions(player, asteroide_group, bullet_group)
         if screen.is_player_colided :
             player.explode(dt)
         else:
             player.movement(dt, keys)
             Bullet.update_bullets(dt)
+            Asteroid.update_asteroid(dt)
 
         # limits FPS to 60
         # dt is delta time in seconds since last frame, used for framerate-
