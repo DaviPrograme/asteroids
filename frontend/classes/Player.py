@@ -20,7 +20,6 @@ class Player(pygame.sprite.Sprite):
         self._current_time = 0
         self._animation_time = 0.095
         self.death = False
-        self.radius = 35
 
 
     def rotate_player(self, angle):
@@ -68,10 +67,3 @@ class Player(pygame.sprite.Sprite):
             pass
         return False
 
-    @property
-    def player_pos(self):
-        return self._player_pos
-
-    @player_pos.setter
-    def player_pos(self, novo_pos):
-        self._player_pos = novo_pos
