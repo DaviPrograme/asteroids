@@ -11,4 +11,3 @@ class Asteroid(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.position = pygame.Vector2(100,100)
         self.rect = self.image.get_rect(center=self.position)
-        # self.radius = 40

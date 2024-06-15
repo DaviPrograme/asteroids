@@ -73,11 +73,13 @@ class Player(pygame.sprite.Sprite):
 class Bullet():
     bullets = []
     def __init__(self, player_x, player_y, player_angle):
-        self._bullet_image = pygame.image.load("frontend/sprites/nave/tiro.png").convert_alpha()
+        # self._bullet_image = pygame.image.load("frontend/sprites/nave/tiro.png").convert_alpha()
+        self._bullet_image = pygame.transform.rotate(pygame.image.load("frontend/sprites/nave/tiro.png").convert_alpha(), player_angle)  # Rotate bullet sprite
         self._bullet_pos = pygame.Vector2(player_x, player_y)
         self._bullet_angle = player_angle
         self._bullet_speed = 600
         self._bullet_rect = self._bullet_image.get_rect(center=self._bullet_pos)
+
     @classmethod
     def load_bullet(cls, bullet_pos, bullet_angle, dt):
         gun_x = bullet_pos[0]
