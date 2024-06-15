@@ -1,7 +1,8 @@
 from math import sin, cos, radians
 from time import sleep
 import pygame
-from classes.Player import Bullet, Player
+from classes.Player import Player
+from classes.Bullet import Bullet
 from classes.Asteroid import Asteroid
 from classes.Screen import Screen
 
