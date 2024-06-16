@@ -42,13 +42,12 @@ if __name__ == "__main__":
         keys = pygame.key.get_pressed()
 
         screen.render([*Bullet.bullets, *Asteroid.asteroids, player])
-        screen.update_collisions(player, asteroide_group, bullet_group)
-        if screen.is_player_colided :
-            player.explode(dt)
-        else:
+        if not screen.is_player_colided and not screen.update_collisions(player, asteroide_group, bullet_group):
             player.movement(dt, keys)
             Bullet.update_bullets(dt)
             Asteroid.update_asteroid(dt, screen.width, screen.height)
+        else:
+            player.explode(dt)
 
         # limits FPS to 60
         # dt is delta time in seconds since last frame, used for framerate-

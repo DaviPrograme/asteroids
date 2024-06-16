@@ -7,12 +7,19 @@ class Screen():
         self._screen = pygame.display.set_mode((window_heght, window_width))
     
     def update_collisions(self, player, asteroide_group, bullets_group):
-        self.is_player_colided = True if len(pygame.sprite.spritecollide(player, asteroide_group, False, pygame.sprite.collide_mask)) > 0 else False
+        #checking the collision between the player and the asteroids
+        asteroids_collided_with_player = pygame.sprite.spritecollide(player, asteroide_group, False, pygame.sprite.collide_mask)
+        self.is_player_colided = True if len(asteroids_collided_with_player) > 0 else False
+        for asteroid_collided in asteroids_collided_with_player:
+            asteroide_group.remove(asteroid_collided)
+
+        #checking the collision between bullets and asteroids
         for bullet in bullets_group:
             for asteroid in asteroide_group:
                 if pygame.sprite.collide_mask(bullet, asteroid):
                     asteroide_group.remove(asteroid)
                     bullets_group.remove(bullet)
+        return self.is_player_colided
 
     def off_screen(self, x, y):
         if x < 0:
