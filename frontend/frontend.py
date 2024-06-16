@@ -48,7 +48,7 @@ if __name__ == "__main__":
         else:
             player.movement(dt, keys)
             Bullet.update_bullets(dt)
-            Asteroid.update_asteroid(dt)
+            Asteroid.update_asteroid(dt, screen.width, screen.height)
 
         # limits FPS to 60
         # dt is delta time in seconds since last frame, used for framerate-
