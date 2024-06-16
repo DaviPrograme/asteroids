@@ -14,11 +14,10 @@ class Asteroid(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.asteroid_initial_position()
         self.speed = 100
-        self.rect = self.image.get_rect(center=self.position)
+        self.rect = self.image.get_rect(center=self.pos)
 
     @classmethod
     def load_asteroid(cls, height, width):
-        print(len(cls.asteroids))
         while len(cls.asteroids) < 5:
             cls.asteroids.append(Asteroid(height, width))
 
@@ -26,27 +25,27 @@ class Asteroid(pygame.sprite.Sprite):
         self.id = Asteroid.id
         Asteroid.id += 1
         if self.id % 2 == 0:
-            self.position = pygame.Vector2(randint(0, 1280), 780)
+            self.pos = pygame.Vector2(randint(0, 1280), 780)
             self.angle = randint(180, 360)
         else:
-            self.position = pygame.Vector2(randint(0, 1280), -30)
+            self.pos = pygame.Vector2(randint(0, 1280), -30)
             self.angle = randint(0, 180)
 
 
     def move(self, dt):
         move_ang = radians(self.angle)
         if move_ang > 0 or move_ang < 180:
-            self.position.y += self.speed * sin(move_ang) * dt
-            self.position.x -= self.speed * cos(move_ang) * dt
+            self.pos.y += self.speed * sin(move_ang) * dt
+            self.pos.x -= self.speed * cos(move_ang) * dt
         else:
-            self.position.y -= self.speed * sin(move_ang) * dt
-            self.position.x += self.speed * cos(move_ang) * dt
-        self.rect.center = (int(self.position[0]), int(self.position[1]))
+            self.pos.y -= self.speed * sin(move_ang) * dt
+            self.pos.x += self.speed * cos(move_ang) * dt
+        self.rect.center = (int(self.pos[0]), int(self.pos[1]))
 
     @classmethod
     def update_asteroid(cls, dt, height, width):
         cls.load_asteroid(height, width)
         for asteroid in cls.asteroids:
             asteroid.move(dt)
-            if asteroid.position[0] < -50 or asteroid.position[0] > 1330 or asteroid.position[1] < -50 or asteroid.position[1] > 830:
+            if asteroid.pos[0] < -50 or asteroid.pos[0] > 1330 or asteroid.pos[1] < -50 or asteroid.pos[1] > 830:
                 cls.asteroids.remove(asteroid)

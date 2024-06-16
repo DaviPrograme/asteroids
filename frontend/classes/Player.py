@@ -10,11 +10,11 @@ class Player(pygame.sprite.Sprite):
         self._nave = Nave()
         self.image = self._nave.sprites["parado"]
         self.mask = pygame.mask.from_surface(self.image)
-        self._player_pos = pygame.Vector2(x_init, y_init)
+        self.pos = pygame.Vector2(x_init, y_init)
         self._player_speed = 300
         self._rotation_speed = 2.0
         self._player_angle = 90.0
-        self.rect = self.image.get_rect(center=self._player_pos)
+        self.rect = self.image.get_rect(center=self.pos)
         self._current_frame = 0
         self._frame_counter = 0
         self._current_time = 0
@@ -35,7 +35,7 @@ class Player(pygame.sprite.Sprite):
     def shoot(self, dt):
         off_x = cos(radians(self._player_angle)) * self.image.get_width() /2
         off_y = sin(radians(self._player_angle)) * self.image.get_height() /2
-        new_pos = pygame.Vector2(self._player_pos.x + off_x, self._player_pos.y - off_y)
+        new_pos = pygame.Vector2(self.pos.x + off_x, self.pos.y - off_y)
         Bullet.load_bullet(new_pos, self._player_angle, dt)
 
     def movement(self, dt, keys):
@@ -43,15 +43,15 @@ class Player(pygame.sprite.Sprite):
             self.image = self._nave.sprites["boost_duplo"]
             self.rotate_player(0)
             move_ang = radians(self._player_angle)
-            self._player_pos.y -= self._player_speed * sin(move_ang) * dt
-            self._player_pos.x += self._player_speed * cos(move_ang) * dt
+            self.pos.y -= self._player_speed * sin(move_ang) * dt
+            self.pos.x += self._player_speed * cos(move_ang) * dt
         if keys[pygame.K_a]:
             self.image = self._nave.sprites["boost_right"]
             self.rotate_player(self._rotation_speed)
         if keys[pygame.K_d]:
             self.image = self._nave.sprites["boost_left"]
             self.rotate_player(-self._rotation_speed)
-        self.rect.center = (self._player_pos[0] - self.image.get_width()/2, self._player_pos[1] - self.image.get_height()/2)
+        self.rect.center = (self.pos[0] - self.image.get_width()/2, self.pos[1] - self.image.get_height()/2)
 
     def explode(self, dt):
         self._current_time += dt
