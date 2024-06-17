@@ -5,20 +5,23 @@ class Screen():
     def __init__(self, window_heght, window_width):
         self.is_player_colided = False
         self._screen = pygame.display.set_mode((window_heght, window_width))
-    
-    def update_collisions(self, player, asteroide_group, bullets_group):
-        #checking the collision between the player and the asteroids
-        asteroids_collided_with_player = pygame.sprite.spritecollide(player, asteroide_group, False, pygame.sprite.collide_mask)
-        self.is_player_colided = True if len(asteroids_collided_with_player) > 0 else False
-        for asteroid_collided in asteroids_collided_with_player:
-            asteroide_group.remove(asteroid_collided)
 
-        #checking the collision between bullets and asteroids
-        for bullet in bullets_group:
-            for asteroid in asteroide_group:
+    def checking_collision_between_player_and_asteroids(self, player, asteroids):
+        asteroids_collided_with_player = pygame.sprite.spritecollide(player, asteroids, False, pygame.sprite.collide_mask)
+        for asteroid_collided in asteroids_collided_with_player:
+            asteroids.remove(asteroid_collided)
+        return True if len(asteroids_collided_with_player) > 0 else False
+
+    def checking_collision_between_bullets_and_asteroids(self, bullets, asteroids):
+        for bullet in bullets:
+            for asteroid in asteroids:
                 if pygame.sprite.collide_mask(bullet, asteroid):
-                    asteroide_group.remove(asteroid)
-                    bullets_group.remove(bullet)
+                    asteroids.remove(asteroid)
+                    bullets.remove(bullet)
+
+    def update_collisions(self, player, asteroide_group, bullets_group):
+        self.is_player_colided = self.checking_collision_between_player_and_asteroids(player, asteroide_group)
+        self.checking_collision_between_bullets_and_asteroids(bullets_group, asteroide_group)
         return self.is_player_colided
 
     def off_screen(self, x, y):
@@ -38,7 +41,6 @@ class Screen():
             if not isinstance(obj, Bullet):
                 obj.pos = self.off_screen(obj.pos[0], obj.pos[1])
             self._screen.blit(obj.image, obj.rect.center)
-
         # flip() the display to put your work on screen
         pygame.display.flip()
 
