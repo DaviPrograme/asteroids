@@ -15,7 +15,6 @@ class Game():
         self._running = True
         self._dt = 0
 
-
     def run(self):
         while self._running:
             # poll for events
