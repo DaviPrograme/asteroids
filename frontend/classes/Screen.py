@@ -16,7 +16,7 @@ class Screen():
         for bullet in bullets:
             for asteroid in asteroids:
                 if pygame.sprite.collide_mask(bullet, asteroid):
-                    asteroids.remove(asteroid)
+                    asteroid.explode()
                     bullets.remove(bullet)
 
     def update_collisions(self, player, asteroide_group, bullets_group):

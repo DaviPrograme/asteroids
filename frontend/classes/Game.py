@@ -34,7 +34,7 @@ class Game():
             if not self._screen.is_player_colided and not self._screen.update_collisions(self._player, Asteroid.asteroids, Bullet.bullets):
                 self._player.movement(self._dt, pygame.key.get_pressed())
                 Bullet.update_bullets(self._dt)
-                Asteroid.update_asteroid(self._dt, self._screen.width, self._screen.height)
+                Asteroid.update_asteroid(self._dt)
             else:
                 self._player.explode(self._dt)
 
