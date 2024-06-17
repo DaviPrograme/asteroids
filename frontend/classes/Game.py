@@ -3,10 +3,11 @@ from classes.Player import Player
 from classes.Bullet import Bullet
 from classes.Asteroid import Asteroid
 from classes.Screen import Screen
+import sys
 
 class Game():
     def __init__(self):
-        pygame.init()
+        self._lib = pygame.init()
         self._window_height = 1280
         self._window_width = 720
         self._screen = Screen(self._window_height, self._window_width)
@@ -14,6 +15,7 @@ class Game():
         self._clock = pygame.time.Clock()
         self._running = True
         self._dt = 0
+        self._surface = pygame.display.get_surface()
 
     def run(self):
         while self._running:
@@ -42,4 +44,5 @@ class Game():
             # dt is delta time in seconds since last frame, used for framerate-
             # independent physics.
             self._dt = self._clock.tick(60) / 1000
-        pygame.quit()
+        # pygame.quit()
+        sys.exit()
