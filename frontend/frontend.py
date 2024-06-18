@@ -1,5 +1,4 @@
-from classes.Game import Game 
-
+from classes.Menu import Menu
 
 if __name__ == "__main__":
-    Game().run()
+    Menu().run()
