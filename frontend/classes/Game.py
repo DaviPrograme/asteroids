@@ -3,6 +3,7 @@ from classes.Player import Player
 from classes.Bullet import Bullet
 from classes.Asteroid import Asteroid
 from classes.Screen import Screen
+from classes.Text import Text
 import sys
 
 class Game():
@@ -18,6 +19,8 @@ class Game():
         self._surface = pygame.display.get_surface()
         self._health = 2
         self._score = 0
+        # self._text = Text()
+        # self._screen.blit(img, (20, 20))
 
     def player_score(self, asteroid):
         if asteroid.size == 3:
@@ -41,8 +44,9 @@ class Game():
                         self._running = False
                     if not self._player.death and event.key == pygame.K_SPACE:
                         self._player.shoot(self._dt)
-
-            self._screen.render([*Bullet.bullets, *Asteroid.asteroids, self._player])
+            health_text = Text(f"Health: {self._health + 1}", 30, 30)
+            score_text = Text(f"Score: {self._score}", 1000, 30)
+            self._screen.render([*Bullet.bullets, *Asteroid.asteroids, self._player, health_text, score_text])
             if not self._screen.is_player_colided and not self._screen.update_collisions(self._player, Asteroid.asteroids, Bullet.bullets, self.player_score):
                 self._player.movement(self._dt, pygame.key.get_pressed())
                 Bullet.update_bullets(self._dt)
