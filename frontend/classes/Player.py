@@ -23,7 +23,18 @@ class Player(pygame.sprite.Sprite):
         self._current_time = 0
         self._animation_time = 0.095
         self.death = False
+        self._score = 0
 
+    def reset(self):
+        self._player_speed = 0
+        # self._player_angle = 90.0
+        # self._directional_angle_speed = self._player_angle
+        self._current_frame = 0
+        self._frame_counter = 0
+        self._current_time = 0
+        self.death = False
+        self.image = self._nave.sprites["parado"]
+        # self._score = 0
 
     def rotate_player(self, angle):
         self._player_angle += angle  # Update player angle
@@ -86,6 +97,5 @@ class Player(pygame.sprite.Sprite):
             self.death = True
             return True
         except:
-            pass
-        return False
+            return False
 

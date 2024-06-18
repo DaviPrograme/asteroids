@@ -12,16 +12,18 @@ class Screen():
             asteroids.remove(asteroid_collided)
         return True if len(asteroids_collided_with_player) > 0 else False
 
-    def checking_collision_between_bullets_and_asteroids(self, bullets, asteroids):
+    def checking_collision_between_bullets_and_asteroids(self, bullets, asteroids, update_score):
         for bullet in bullets:
             for asteroid in asteroids:
                 if pygame.sprite.collide_mask(bullet, asteroid):
+                    update_score(asteroid)
                     asteroid.explode()
                     bullets.remove(bullet)
 
-    def update_collisions(self, player, asteroide_group, bullets_group):
+
+    def update_collisions(self, player, asteroide_group, bullets_group, update_score):
         self.is_player_colided = self.checking_collision_between_player_and_asteroids(player, asteroide_group)
-        self.checking_collision_between_bullets_and_asteroids(bullets_group, asteroide_group)
+        self.checking_collision_between_bullets_and_asteroids(bullets_group, asteroide_group, update_score)
         return self.is_player_colided
 
     def off_screen(self, x, y):

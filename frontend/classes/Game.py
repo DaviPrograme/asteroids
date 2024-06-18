@@ -16,6 +16,16 @@ class Game():
         self._running = True
         self._dt = 0
         self._surface = pygame.display.get_surface()
+        self._health = 2
+        self._score = 0
+
+    def player_score(self, asteroid):
+        if asteroid.size == 3:
+            self._score += 10
+        elif asteroid.size == 2:
+            self._score += 20
+        elif asteroid.size == 1:
+            self._score += 30
 
     def run(self):
         while self._running:
@@ -33,16 +43,25 @@ class Game():
                         self._player.shoot(self._dt)
 
             self._screen.render([*Bullet.bullets, *Asteroid.asteroids, self._player])
-            if not self._screen.is_player_colided and not self._screen.update_collisions(self._player, Asteroid.asteroids, Bullet.bullets):
+            if not self._screen.is_player_colided and not self._screen.update_collisions(self._player, Asteroid.asteroids, Bullet.bullets, self.player_score):
                 self._player.movement(self._dt, pygame.key.get_pressed())
                 Bullet.update_bullets(self._dt)
                 Asteroid.update_asteroid(self._dt)
             else:
-                self._player.explode(self._dt)
+                if not self._player.explode(self._dt) and self._health >= 0:
+                    self._screen.is_player_colided = False
+                    self._health -= 1
+                    self._player.reset() 
+                if self._health < 0:
+                    self._running = False
+                    # Asteroid.asteroids = []
+                    # Bullet.bullets = [] 
+
 
             # limits FPS to 60
             # dt is delta time in seconds since last frame, used for framerate-
             # independent physics.
             self._dt = self._clock.tick(60) / 1000
+        # print(f"Game Over! Your score was: {self._score}")
         # pygame.quit()
         sys.exit()
