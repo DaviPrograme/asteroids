@@ -1,3 +1,10 @@
+import psycopg as psycopg
+
+host = "localhost"
+port = "9090"
+dbname = "asteroid"
+user = "postgres"
+password = "abcXecole42"
 
 
 def build_player_table(cursor):
@@ -14,7 +21,7 @@ def build_high_scores_table(cursor):
     create_high_scores_table_query = '''
     CREATE TABLE IF NOT EXISTS high_scores (
         id SERIAL PRIMARY KEY,
-        player_id INTEGER REFERENCES players(id),
+        player_id INTEGER UNIQUE REFERENCES players(id),
         score INTEGER,
         date TIMESTAMP
     );
@@ -55,3 +62,36 @@ def build_player_achievements_table(cursor):
     '''
     cursor.execute(create_player_achievements_table_query)
     print("Tabela 'player_achievements' criada com sucesso.")
+
+def table_insert(table_name, columns, values):
+    conn = psycopg.connect(
+        dbname=dbname,
+        user=user,
+        password=password,
+        host=host,
+        port=port
+    )
+    conn.autocommit = True
+    cursor = conn.cursor()
+    query = f'''
+    INSERT INTO {table_name} ({columns})
+    VALUES ({values});
+    '''
+    cursor.execute(query)
+
+def table_upsert(table_name, columns, values, conflict_target, updates):
+    conn = psycopg.connect(
+        dbname=dbname,
+        user=user,
+        password=password,
+        host=host,
+        port=port
+    )
+    conn.autocommit = True
+    cursor = conn.cursor()
+    query = f"""
+    INSERT INTO {table_name} ({columns}) VALUES ({values})
+    ON CONFLICT ({conflict_target})
+    DO UPDATE SET {updates}
+    """
+    cursor.execute(query)
