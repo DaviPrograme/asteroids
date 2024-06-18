@@ -5,7 +5,7 @@ class Menu():
     def __init__(self):
         self._game = Game()
         self._menu = pygame_menu.Menu('Asteroids', 400, 300, theme=pygame_menu.themes.THEME_DARK)
-        self._menu.add.text_input('Name :', default='John Doe')
+        self._menu.add.text_input('Name :', default='John Doe', onchange = self._game.set_player_name)
         self._menu.add.button('Play', self._game.run)
         self._menu.add.button('Quit', pygame_menu.events.EXIT)
     

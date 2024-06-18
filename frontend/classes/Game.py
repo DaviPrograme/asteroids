@@ -1,3 +1,5 @@
+from time import sleep
+from os import name
 import pygame
 from classes.Player import Player
 from classes.Bullet import Bullet
@@ -19,8 +21,12 @@ class Game():
         self._surface = pygame.display.get_surface()
         self._health = 2
         self._score = 0
-        # self._text = Text()
-        # self._screen.blit(img, (20, 20))
+        self._player_name = "John Doe"
+
+    def set_player_name(self, name):
+        self._player_name = name
+
+
 
     def player_score(self, asteroid):
         if asteroid.size == 3:
@@ -44,9 +50,12 @@ class Game():
                         self._running = False
                     if not self._player.death and event.key == pygame.K_SPACE:
                         self._player.shoot(self._dt)
+            
             health_text = Text(f"Health: {self._health + 1}", 30, 30)
             score_text = Text(f"Score: {self._score}", 1000, 30)
-            self._screen.render([*Bullet.bullets, *Asteroid.asteroids, self._player, health_text, score_text])
+            name_text = Text(self._player_name, 550, 30)
+
+            self._screen.render([*Bullet.bullets, *Asteroid.asteroids, self._player, health_text, score_text, name_text])
             if not self._screen.is_player_colided and not self._screen.update_collisions(self._player, Asteroid.asteroids, Bullet.bullets, self.player_score):
                 self._player.movement(self._dt, pygame.key.get_pressed())
                 Bullet.update_bullets(self._dt)
@@ -58,14 +67,14 @@ class Game():
                     self._player.reset() 
                 if self._health < 0:
                     self._running = False
-                    # Asteroid.asteroids = []
-                    # Bullet.bullets = [] 
-
 
             # limits FPS to 60
             # dt is delta time in seconds since last frame, used for framerate-
             # independent physics.
             self._dt = self._clock.tick(60) / 1000
-        # print(f"Game Over! Your score was: {self._score}")
+        print(f"Game Over! Your score was: {self._score}")
+        self._screen.render([Text(f"Game Over! Your score was: {self._score}", 400, 300)])
+        
+        sleep(10)
         # pygame.quit()
         sys.exit()
