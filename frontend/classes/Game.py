@@ -7,8 +7,8 @@ from classes.Bullet import Bullet
 from classes.Asteroid import Asteroid
 from classes.Screen import Screen
 from classes.Text import Text
-sys.path.append('/home/luizedua/42/labs/asteroids')
-from backend.db.query import table_insert, table_upsert
+sys.path.append(os.path.abspath(os.path.dirname(__file__)) + "/../../")
+from backend.db.query import table_insert, table_upsert, is_player_highest_score, insert_new_player_highest_score
 
 class Game():
     def __init__(self):
@@ -27,8 +27,6 @@ class Game():
 
     def set_player_name(self, name):
         self._player_name = name
-
-
 
     def player_score(self, asteroid):
         if asteroid.size == 3:
@@ -76,22 +74,12 @@ class Game():
             self._dt = self._clock.tick(60) / 1000
         print(f"Game Over! Your score was: {self._score}")
         self._screen.render([Text(f"Game Over! Your score was: {self._score}", 400, 300)])
-        table_insert('players', 'player_name', f"'{self._player_name}'")
-        table_insert('score_history', 'player_id, score, date', f"(SELECT id FROM players WHERE player_name = '{self._player_name}' ORDER BY id DESC LIMIT 1), {self._score}, CURRENT_TIMESTAMP")        
-   
-        table_upsert(
-            'high_scores', 
-            'player_id, score, date', 
-            f"(SELECT id FROM players WHERE player_name = '{self._player_name}' ORDER BY id DESC LIMIT 1), {self._score}, CURRENT_TIMESTAMP", 
-            'player_id', 
-            f"score = GREATEST(EXCLUDED.score, score), date = CASE WHEN EXCLUDED.score > score THEN EXCLUDED.date ELSE date END"
-        )
-        # table_upsert(
-        #     'high_scores', 
-        #     'player_id, score, date', 
-        #     f"(SELECT id FROM players WHERE player_name = '{self._player_name}' ORDER BY id DESC LIMIT 1), {self._score}, CURRENT_TIMESTAMP", 
-        #     'player_id', 
-        #     f"score = EXCLUDED.score, date = EXCLUDED.date"
-        # )
+        self.update_db()
         sleep(5)
         sys.exit()
+
+    def update_db(self):
+        table_insert('players', 'player_name', f"'{self._player_name}'")
+        table_insert('score_history', 'player_id, score, date', f"(SELECT id FROM players WHERE player_name = '{self._player_name}' ORDER BY id DESC LIMIT 1), {self._score}, CURRENT_TIMESTAMP")
+        if is_player_highest_score(self._player_name, self._score):
+            insert_new_player_highest_score(self._player_name, self._score)

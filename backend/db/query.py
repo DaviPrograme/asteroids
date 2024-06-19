@@ -78,6 +78,8 @@ def table_insert(table_name, columns, values):
     VALUES ({values});
     '''
     cursor.execute(query)
+    cursor.close()
+    conn.close()
 
 def table_upsert(table_name, columns, values, conflict_target, updates):
     conn = psycopg.connect(
@@ -95,3 +97,54 @@ def table_upsert(table_name, columns, values, conflict_target, updates):
     DO UPDATE SET {updates}
     """
     cursor.execute(query)
+    cursor.close()
+    conn.close()
+
+
+def is_player_highest_score(player_name, score):
+    conn = psycopg.connect(
+        dbname=dbname,
+        user=user,
+        password=password,
+        host=host,
+        port=port
+    )
+    conn.autocommit = True
+    cursor = conn.cursor()
+    query = f"""SELECT * FROM score_history as s JOIN players as p ON (p.id = s.player_id) WHERE player_name = '{player_name}' AND score > {score}"""
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    # ret = False if len(rows) > 0 else True
+    cursor.close()
+    conn.close()
+    return False if len(rows) > 0 else True
+
+
+def insert_new_player_highest_score(player_name, score):
+    conn = psycopg.connect(
+        dbname=dbname,
+        user=user,
+        password=password,
+        host=host,
+        port=port
+    )
+    conn.autocommit = True
+    cursor = conn.cursor()
+    query_identify = f"""select * from players as p join high_scores as h on (p.id = h.player_id) where player_name = '{player_name}'"""
+    cursor.execute(query_identify)
+    rows = cursor.fetchall()
+    if len(rows) == 0 :
+        query = f"""
+        INSERT INTO high_scores (player_id, score, date)
+        VALUES ((select id from players where player_name = %s order by id desc limit 1), %s, CURRENT_TIMESTAMP)
+        """
+    else:
+        _id = rows[0][2]
+        query = f"""
+        UPDATE high_scores 
+        SET player_id = (SELECT id FROM players WHERE player_name = %s ORDER BY id DESC LIMIT 1), score = %s, date = CURRENT_TIMESTAMP 
+        WHERE id = {_id}
+        """
+    cursor.execute(query, (player_name, score))
+    cursor.close()
+    conn.close()
