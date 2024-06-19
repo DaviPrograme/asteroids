@@ -14,11 +14,12 @@ class Screen():
 
     def checking_collision_between_bullets_and_asteroids(self, bullets, asteroids, update_score):
         for bullet in bullets:
-            for asteroid in asteroids:
-                if pygame.sprite.collide_mask(bullet, asteroid):
-                    update_score(asteroid)
-                    asteroid.explode()
-                    bullets.remove(bullet)
+            asteroids_collided_with_bullet = pygame.sprite.spritecollide(bullet, asteroids, False, pygame.sprite.collide_mask)
+            if asteroids_collided_with_bullet :
+                bullets.remove(bullet)
+            for asteroid in asteroids_collided_with_bullet:
+                update_score(asteroid)
+                asteroid.explode()
 
 
     def update_collisions(self, player, asteroide_group, bullets_group, update_score):
