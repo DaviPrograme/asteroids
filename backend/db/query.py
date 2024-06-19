@@ -8,6 +8,10 @@ password = "abcXecole42"
 
 
 def build_player_table(cursor):
+    """build_player_table 
+        Método que cria a tabela de jogadores
+        :param cursor: Cursor
+    """
     create_players_table_query = '''
     CREATE TABLE IF NOT EXISTS players (
         id SERIAL PRIMARY KEY,
@@ -18,6 +22,10 @@ def build_player_table(cursor):
     print("Tabela 'players' criada com sucesso.")
 
 def build_high_scores_table(cursor):
+    """build_high_scores_table
+        Método que cria a tabela de pontuações
+        :param cursor: Cursor
+    """
     create_high_scores_table_query = '''
     CREATE TABLE IF NOT EXISTS high_scores (
         id SERIAL PRIMARY KEY,
@@ -30,6 +38,10 @@ def build_high_scores_table(cursor):
     print("Tabela 'high_scores' criada com sucesso.")
 
 def build_score_history_table(cursor):
+    """build_score_history_table
+        Método que cria a tabela de histórico de pontuações
+        :param cursor: Cursor
+    """
     create_score_history_table_query = '''
     CREATE TABLE IF NOT EXISTS score_history (
         id SERIAL PRIMARY KEY,
@@ -42,6 +54,10 @@ def build_score_history_table(cursor):
     print("Tabela 'score_history' criada com sucesso.")
 
 def build_create_achievements_table(cursor):
+    """build_create_achievements_table
+        Método que cria a tabela de conquistas
+        :param cursor: Cursor
+    """
     create_achievements_table_query = '''
     CREATE TABLE IF NOT EXISTS achievements (
         id SERIAL PRIMARY KEY,
@@ -53,6 +69,10 @@ def build_create_achievements_table(cursor):
     print("Tabela 'achievements' criada com sucesso.")
 
 def build_player_achievements_table(cursor):
+    """build_player_achievements_table
+        Método que cria a tabela de conquistas dos jogadores
+        :param cursor: Cursor
+    """
     create_player_achievements_table_query = '''
     CREATE TABLE IF NOT EXISTS player_achievements (
         player_id INTEGER REFERENCES players(id),
@@ -64,6 +84,12 @@ def build_player_achievements_table(cursor):
     print("Tabela 'player_achievements' criada com sucesso.")
 
 def table_insert(table_name, columns, values):
+    """table_insert
+        Método que insere valores em uma tabela
+        :param table_name: Nome da tabela
+        :param columns: Colunas
+        :param values: Valores
+    """
     conn = psycopg.connect(
         dbname=dbname,
         user=user,
@@ -82,6 +108,14 @@ def table_insert(table_name, columns, values):
     conn.close()
 
 def table_upsert(table_name, columns, values, conflict_target, updates):
+    """table_upsert
+        Método que insere ou atualiza valores em uma tabela
+        :param table_name: Nome da tabela
+        :param columns: Colunas
+        :param values: Valores
+        :param conflict_target: Coluna de conflito
+        :param updates: Atualizações
+    """
     conn = psycopg.connect(
         dbname=dbname,
         user=user,
@@ -102,6 +136,11 @@ def table_upsert(table_name, columns, values, conflict_target, updates):
 
 
 def is_player_highest_score(player_name, score):
+    """is_player_highest_score
+        Método que verifica se a pontuação do jogador é a maior
+        :param player_name: Nome do jogador
+        :param score: Pontuação
+    """
     conn = psycopg.connect(
         dbname=dbname,
         user=user,
@@ -121,6 +160,11 @@ def is_player_highest_score(player_name, score):
 
 
 def insert_new_player_highest_score(player_name, score):
+    """insert_new_player_highest_score
+        Método que insere a nova pontuação do jogador
+        :param player_name: Nome do jogador
+        :param score: Pontuação
+    """
     conn = psycopg.connect(
         dbname=dbname,
         user=user,
@@ -152,6 +196,10 @@ def insert_new_player_highest_score(player_name, score):
 
 
 def count_games_player(player_name):
+    """count_games_player
+        Método que conta os jogos de um jogador
+        :param player_name: Nome do jogador
+    """
     conn = psycopg.connect(
         dbname=dbname,
         user=user,
@@ -170,6 +218,10 @@ def count_games_player(player_name):
 
 
 def highest_score_all(score):
+    """highest_score_all
+        Método que verifica se a pontuação é a maior
+        :param score: Pontuação
+    """
     conn = psycopg.connect(
         dbname=dbname,
         user=user,
@@ -187,6 +239,10 @@ def highest_score_all(score):
     return True if len(row[0]) == 0 else False
 
 def populate_achievements(cursor):
+    """populate_achievements
+        Método que popula a tabela de conquistas
+        :param cursor: Cursor
+    """
     achievements = [
         ("First Game", "First time playing the game"),
         ("First Score", "First time scoring points"),
@@ -206,6 +262,11 @@ def populate_achievements(cursor):
         cursor.execute(query)
 
 def achievements_selection(player_name, score):
+    """achievements_selection
+        Método que seleciona as conquistas
+        :param player_name: Nome do jogador
+        :param score: Pontuação
+    """
     conn = psycopg.connect(
         dbname=dbname,
         user=user,
@@ -225,6 +286,10 @@ def achievements_selection(player_name, score):
 
 
 def games_achievement(player_name):
+    """games_achievement
+        Método que verifica a conquista de jogos
+        :param player_name: Nome do jogador
+    """
     games_played = {
         1: "First Game",
         5: "5 Games",
@@ -236,6 +301,10 @@ def games_achievement(player_name):
     return games_played.get(count, False)
 
 def score_achievement(score):
+    """score_achievement
+        Método que verifica a conquista de pontuação
+        :param score: Pontuação
+    """
     score_achieved = {
         1: "First Score",
         100: "100 Points",

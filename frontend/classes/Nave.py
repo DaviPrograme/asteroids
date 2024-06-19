@@ -3,6 +3,10 @@ import os
 
 class Nave():
     def __init__(self):
+        """__init__
+            Método construtor da classe Nave
+            :param self: Classe Nave
+        """
         self._path = os.path.abspath(os.path.dirname(__file__)) + "/../../frontend/sprites/nave/"
         self.sprites = {
             "bullet" : pygame.image.load(self._path + "tiro.png").convert_alpha(),

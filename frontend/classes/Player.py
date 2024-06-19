@@ -6,6 +6,12 @@ from classes.Bullet import Bullet
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x_init, y_init):
+        """__init__ 
+            Método construtor da classe Player
+            :param self: Classe Player
+            :param x_init: Posição x inicial
+            :param y_init: Posição y inicial
+        """
         pygame.sprite.Sprite.__init__(self)
         self._nave = Nave()
         self.image = self._nave.sprites["parado"]
@@ -26,6 +32,10 @@ class Player(pygame.sprite.Sprite):
         self._score = 0
 
     def reset(self):
+        """reset 
+            Método que reseta o jogador
+            :param self: Classe Player
+        """
         self._player_speed = 0
         # self._player_angle = 90.0
         # self._directional_angle_speed = self._player_angle
@@ -37,31 +47,64 @@ class Player(pygame.sprite.Sprite):
         # self._score = 0
 
     def rotate_player(self, angle):
+        """rotate_player
+            Método que rotaciona o jogador
+            :param self: Classe Player
+            :param angle: Ângulo de rotação
+        """
         self._player_angle += angle  # Update player angle
         if abs(self._player_angle) >= 360:
             self._player_angle = (self._player_angle) % 360
         self.image = pygame.transform.rotate(self.image, self._player_angle)  # Rotate player sprite
 
     def stoped(self):
+        """stoped 
+            Método que para o jogador
+            :param self: Classe Player
+        """
         self.image = self._nave.sprites["parado90"]
         self.rotate_player(0)
 
     def shoot(self, dt):
+        """shoot
+            Método que faz o jogador atirar
+            :param self: Classe Player
+            :param dt: Tempo
+        """
         off_x = cos(radians(self._player_angle)) * self.image.get_width() /2
         off_y = sin(radians(self._player_angle)) * self.image.get_height() /2
         new_pos = pygame.Vector2(self.pos.x + off_x, self.pos.y - off_y)
         Bullet.load_bullet(new_pos, self._player_angle, dt)
 
     def apply_acceleration(self):
+        """apply_acceleration
+            Método que aplica a aceleração no jogador
+            :param self: Classe Player
+        """
         self._player_speed = self._max_speed if self._player_speed + self._acceleration >= self._max_speed else self._player_speed + self._acceleration
 
     def apply_slowdown(self, delta):
+        """apply_slowdown
+            Método que aplica a desaceleração no jogador
+            :param self: Classe Player
+            :param delta: Delta
+        """
         self._player_speed = 0 if self._player_speed - delta <= 0 else self._player_speed - delta
 
     def update_directional_angle_speed(self):
+        """update_directional_angle_speed
+            Método que atualiza a direção do jogador
+            :param self: Classe Player
+        """
         self._directional_angle_speed = self._player_angle if self._player_speed <= 100 else self._directional_angle_speed
 
     def movement(self, dt, keys):
+        """movement
+            Método que controla o movimento do jogador
+            :param self: Classe Player
+            :param dt: Tempo
+            :param keys: Teclas pressionadas
+        """
         if keys[pygame.K_w]:
             self.image = self._nave.sprites["boost_duplo"]
             self.rotate_player(0)
@@ -87,6 +130,11 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = (self.pos[0] - self.image.get_width()/2, self.pos[1] - self.image.get_height()/2)
 
     def explode(self, dt):
+        """explode
+            Método que faz o jogador explodir
+            :param self: Classe Player
+            :param dt: Tempo
+        """
         self._current_time += dt
         if self._current_time >= self._animation_time:
             self._current_time = 0

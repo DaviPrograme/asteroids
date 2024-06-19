@@ -12,6 +12,10 @@ from backend.db.query import table_insert, table_upsert, is_player_highest_score
 
 class Game():
     def __init__(self):
+        """__init__ 
+            Método construtor da classe Game
+            :param self: Classe Game
+        """
         self._lib = pygame.init()
         self._window_height = 1280
         self._window_width = 720
@@ -26,9 +30,19 @@ class Game():
         self._player_name = "John Doe"
 
     def set_player_name(self, name):
+        """set_player_name
+            Método que define o nome do jogador
+            :param self: Classe Game
+            :param name: Nome do jogador
+        """
         self._player_name = name
 
     def player_score(self, asteroid):
+        """player_score
+            Método que calcula a pontuação do jogador
+            :param self: Classe Game
+            :param asteroid: Asteroide
+        """
         if asteroid.size == 3:
             self._score += 10
         elif asteroid.size == 2:
@@ -37,6 +51,10 @@ class Game():
             self._score += 30
 
     def run(self):
+        """run 
+            Método que roda o jogo
+            :param self: Classe Game
+        """
         while self._running:
             # poll for events
             # pygame.QUIT event means the user clicked X to close your window
@@ -79,6 +97,10 @@ class Game():
         sys.exit()
 
     def update_db(self):
+        """update_db 
+            Método que atualiza o banco de dados
+            :param self: Classe Game
+        """
         table_insert('players', 'player_name', f"'{self._player_name}'")
         table_insert('score_history', 'player_id, score, date', f"(SELECT id FROM players WHERE player_name = '{self._player_name}' ORDER BY id DESC LIMIT 1), {self._score}, CURRENT_TIMESTAMP")
         if is_player_highest_score(self._player_name, self._score):
