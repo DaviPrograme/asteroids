@@ -8,7 +8,7 @@ from classes.Asteroid import Asteroid
 from classes.Screen import Screen
 from classes.Text import Text
 sys.path.append(os.path.abspath(os.path.dirname(__file__)) + "/../../")
-from backend.db.query import table_insert, table_upsert, is_player_highest_score, insert_new_player_highest_score
+from backend.db.query import table_insert, table_upsert, is_player_highest_score, insert_new_player_highest_score, achievements_selection
 
 class Game():
     def __init__(self):
@@ -83,3 +83,4 @@ class Game():
         table_insert('score_history', 'player_id, score, date', f"(SELECT id FROM players WHERE player_name = '{self._player_name}' ORDER BY id DESC LIMIT 1), {self._score}, CURRENT_TIMESTAMP")
         if is_player_highest_score(self._player_name, self._score):
             insert_new_player_highest_score(self._player_name, self._score)
+        achievements_selection(self._player_name, self._score)

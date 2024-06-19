@@ -133,6 +133,7 @@ def insert_new_player_highest_score(player_name, score):
     query_identify = f"""select * from players as p join high_scores as h on (p.id = h.player_id) where player_name = '{player_name}'"""
     cursor.execute(query_identify)
     rows = cursor.fetchall()
+    print(rows)
     if len(rows) == 0 :
         query = f"""
         INSERT INTO high_scores (player_id, score, date)
@@ -163,6 +164,8 @@ def count_games_player(player_name):
     query = f"""select count(*) from score_history as s join players as p on (s.player_id = p.id) where player_name = '{player_name}'"""
     cursor.execute(query)
     row = cursor.fetchone()
+    cursor.close()
+    conn.close()
     return row[0]
 
 
@@ -179,4 +182,69 @@ def highest_score_all(score):
     query = f"""select count(*) from high_scores where score > {score}"""
     cursor.execute(query)
     row = cursor.fetchone()
+    cursor.close()
+    conn.close()
     return True if len(row[0]) == 0 else False
+
+def populate_achievements(cursor):
+    achievements = [
+        ("First Game", "First time playing the game"),
+        ("First Score", "First time scoring points"),
+        ("5 Games", "Played 5 games"),
+        ("10 Games", "Played 10 games"),
+        ("20 Games", "Played 20 games"),
+        ("50 Games", "Played 50 games"),
+        ("100 Points", "Scored 100 points"),
+        ("500 Points", "Scored 500 points"),
+        ("1000 Points", "Scored 1000 points"),
+        ("5000 Points", "Scored 5000 points"),
+        ("10000 Points", "Scored 10000 points"),
+
+    ]
+    for achievement in achievements:
+        query = f"""INSERT INTO achievements (achievement_name, description) VALUES ('{achievement[0]}', '{achievement[1]}')"""
+        cursor.execute(query)
+
+def achievements_selection(player_name, score):
+    conn = psycopg.connect(
+        dbname=dbname,
+        user=user,
+        password=password,
+        host=host,
+        port=port
+    )
+    conn.autocommit = True
+    cursor = conn.cursor()
+    games = games_achievement(player_name)
+    if games:
+        table_insert("player_achievements", "player_id, achievement_id, date_earned", f"(SELECT id FROM players WHERE player_name = '{player_name}' ORDER BY id DESC LIMIT 1), (SELECT id FROM achievements WHERE achievement_name = '{games}'), CURRENT_TIMESTAMP")
+    scores = score_achievement(score)
+    for score in scores:
+        print(f"Score: {score}")
+        table_insert("player_achievements", "player_id, achievement_id, date_earned", f"(SELECT id FROM players WHERE player_name = '{player_name}' ORDER BY id DESC LIMIT 1), (SELECT id FROM achievements WHERE achievement_name = '{score}'), CURRENT_TIMESTAMP")
+
+
+def games_achievement(player_name):
+    games_played = {
+        1: "First Game",
+        5: "5 Games",
+        10: "10 Games",
+        20: "20 Games",
+        50: "50 Games",
+    }
+    count = count_games_player(player_name)
+    return games_played.get(count, False)
+
+def score_achievement(score):
+    score_achieved = {
+        1: "First Score",
+        100: "100 Points",
+        500: "500 Points",
+        1000: "1000 Points",
+        5000: "5000 Points",
+        10000: "10000 Points",
+    }
+    result = [key for key in score_achieved.keys() if key <= score]
+    if result:
+        return [score_achieved[key] for key in result]
+    return []
