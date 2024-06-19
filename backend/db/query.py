@@ -148,3 +148,35 @@ def insert_new_player_highest_score(player_name, score):
     cursor.execute(query, (player_name, score))
     cursor.close()
     conn.close()
+
+
+def count_games_player(player_name):
+    conn = psycopg.connect(
+        dbname=dbname,
+        user=user,
+        password=password,
+        host=host,
+        port=port
+    )
+    conn.autocommit = True
+    cursor = conn.cursor()
+    query = f"""select count(*) from score_history as s join players as p on (s.player_id = p.id) where player_name = '{player_name}'"""
+    cursor.execute(query)
+    row = cursor.fetchone()
+    return row[0]
+
+
+def highest_score_all(score):
+    conn = psycopg.connect(
+        dbname=dbname,
+        user=user,
+        password=password,
+        host=host,
+        port=port
+    )
+    conn.autocommit = True
+    cursor = conn.cursor()
+    query = f"""select count(*) from high_scores where score > {score}"""
+    cursor.execute(query)
+    row = cursor.fetchone()
+    return True if len(row[0]) == 0 else False
