@@ -177,7 +177,6 @@ def insert_new_player_highest_score(player_name, score):
     query_identify = f"""select * from players as p join high_scores as h on (p.id = h.player_id) where player_name = '{player_name}'"""
     cursor.execute(query_identify)
     rows = cursor.fetchall()
-    print(rows)
     if len(rows) == 0 :
         query = f"""
         INSERT INTO high_scores (player_id, score, date)
