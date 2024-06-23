@@ -131,26 +131,26 @@ def table_insert(table_name, columns, values):
     conn.close()
 
 
-def count_games_player(player_name):
-    """count_games_player
-        Método que conta os jogos de um jogador
-        :param player_name: Nome do jogador
-    """
-    conn = psycopg.connect(
-        dbname=dbname,
-        user=user,
-        password=password,
-        host=host,
-        port=port
-    )
-    conn.autocommit = True
-    cursor = conn.cursor()
-    query = f"""select count(*) from score_history as s join players as p on (s.player_id = p.id) where player_name = '{player_name}'"""
-    cursor.execute(query)
-    row = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    return row[0]
+# def count_games_player(player_name):
+#     """count_games_player
+#         Método que conta os jogos de um jogador
+#         :param player_name: Nome do jogador
+#     """
+#     conn = psycopg.connect(
+#         dbname=dbname,
+#         user=user,
+#         password=password,
+#         host=host,
+#         port=port
+#     )
+#     conn.autocommit = True
+#     cursor = conn.cursor()
+#     query = f"""select count(*) from score_history as s join players as p on (s.player_id = p.id) where player_name = '{player_name}'"""
+#     cursor.execute(query)
+#     row = cursor.fetchone()
+#     cursor.close()
+#     conn.close()
+#     return row[0]
 
 
 def highest_score_all(score):
@@ -215,7 +215,7 @@ def achievements_selection(player_name, score):
     games = games_achievement(player_name)
     if games:
         table_insert("player_achievements", "player_id, achievement_id, date_earned", f"(SELECT id FROM players WHERE player_name = '{player_name}' ORDER BY id DESC LIMIT 1), (SELECT id FROM achievements WHERE achievement_name = '{games}'), CURRENT_TIMESTAMP")
-    scores = score_achievement(score)
+    scores = score_achievement(player_name, score)
     for score in scores:
         print(f"Score: {score}")
         table_insert("player_achievements", "player_id, achievement_id, date_earned", f"(SELECT id FROM players WHERE player_name = '{player_name}' ORDER BY id DESC LIMIT 1), (SELECT id FROM achievements WHERE achievement_name = '{score}'), CURRENT_TIMESTAMP")
@@ -233,10 +233,49 @@ def games_achievement(player_name):
         20: "20 Games",
         50: "50 Games",
     }
-    count = count_games_player(player_name)
+    count = get_count_games_player(player_name)
     return games_played.get(count, False)
 
-def score_achievement(score):
+
+def get_count_games_player(player_name):
+    conn = psycopg.connect(
+        dbname=dbname,
+        user=user,
+        password=password,
+        host=host,
+        port=port
+    )
+    conn.autocommit = True
+    cursor = conn.cursor()
+    query = f"""SELECT get_count_games_player('{player_name}')"""
+    cursor.execute(query)
+    result = cursor.fetchone()
+    count_games = 0 if len(result) == 0 else result[0]
+    cursor.close()
+    conn.close()
+    return count_games
+
+
+def get_highest_score_player(player_name):
+    conn = psycopg.connect(
+        dbname=dbname,
+        user=user,
+        password=password,
+        host=host,
+        port=port
+    )
+    conn.autocommit = True
+    cursor = conn.cursor()
+    query = f"""SELECT get_highest_score_player('{player_name}')"""
+    cursor.execute(query)
+    result = cursor.fetchone()
+    highest_score = 0 if len(result) == 0 else result[0]
+    cursor.close()
+    conn.close()
+    return highest_score
+
+
+def score_achievement(player_name, score):
     """score_achievement
         Método que verifica a conquista de pontuação
         :param score: Pontuação
@@ -249,7 +288,8 @@ def score_achievement(score):
         5000: "5000 Points",
         10000: "10000 Points",
     }
-    result = [key for key in score_achieved.keys() if key <= score]
+    highest_score = get_highest_score_player(player_name)
+    result = [key for key in score_achieved.keys() if key <= score and key > highest_score]
     if result:
         return [score_achieved[key] for key in result]
     return []
@@ -331,6 +371,71 @@ def create_procedures_db(cursor):
     AFTER INSERT ON score_history
     FOR EACH ROW
     EXECUTE FUNCTION update_high_score();
+
+
+    CREATE OR REPLACE FUNCTION get_highest_score_player(play_name TEXT)
+    RETURNS INTEGER
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE
+        play_id INTEGER;
+        last_game_date TIMESTAMP;
+        high_score_date TIMESTAMP;
+        high_score_player INTEGER;
+        count_games INTEGER;
+    BEGIN
+        -- Obtém o id do jogador
+        SELECT id INTO play_id FROM players WHERE player_name = play_name;
+
+        -- Obtém a data do último jogo
+        SELECT date INTO last_game_date 
+        FROM score_history 
+        WHERE player_id = play_id 
+        ORDER BY date DESC 
+        LIMIT 1;
+
+        -- Obtém a data do high score
+        SELECT date INTO high_score_date 
+        FROM high_scores 
+        WHERE player_id = play_id 
+        ORDER BY date DESC
+        LIMIT 1;
+
+        -- Obtém a contagem de jogos do jogador
+        SELECT get_count_games_player(play_name) INTO count_games;
+
+        -- Condicional baseado nas datas e na contagem de jogos
+        IF high_score_date = last_game_date AND count_games > 1 THEN
+            SELECT score INTO high_score_player 
+            FROM score_history 
+            WHERE player_id = play_id 
+            ORDER BY date DESC 
+            OFFSET 1 LIMIT 1;
+        ELSIF count_games = 1 THEN
+            high_score_player := 0;
+        ELSE
+            SELECT score INTO high_score_player 
+            FROM high_scores 
+            WHERE player_id = play_id;
+        END IF;
+
+        RETURN high_score_player;
+    END;
+    $$;
+
+
+    CREATE OR REPLACE FUNCTION get_count_games_player(play_name TEXT)
+    RETURNS INTEGER
+    AS $$
+    DECLARE
+        play_id INTEGER;
+        count_games INTEGER;
+    BEGIN
+        SELECT id INTO play_id FROM players WHERE player_name = play_name;
+        SELECT count(*) INTO count_games FROM score_history WHERE player_id = play_id;
+        RETURN count_games;
+    END;
+    $$ LANGUAGE plpgsql;
     '''
     cursor.execute(query)
     cursor.close()

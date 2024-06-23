@@ -65,3 +65,41 @@ CREATE TRIGGER trigger_update_high_score
 AFTER INSERT ON score_history
 FOR EACH ROW
 EXECUTE FUNCTION update_high_score();
+
+
+CREATE OR REPLACE FUNCTION get_highest_score_player(play_name TEXT)
+RETURNS INTEGER
+AS $$
+DECLARE
+    play_id INTEGER;
+    last_game_date DATE;
+    high_score_date DATE;
+    high_score_player INTEGER;
+BEGIN
+    SELECT id INTO play_id FROM players WHERE player_name = play_name;
+    SELECT date INTO last_game_date FROM score_history WHERE id = play_id ORDER BY date DESC LIMIT 1;
+    SELECT date INTO  high_score_date FROM high_scores WHERE id = play_id LIMIT 1;
+
+    IF high_score_date = last_game_date THEN
+        SELECT id, score INTO play_id, high_score_player FROM score_history WHERE player_id = play_id ORDER BY id DESC OFFSET 1 LIMIT 1;
+    ELSE
+         SELECT score INTO high_score_player FROM high_scores WHERE player_id = play_id;
+    END IF;
+    RETURN high_score_player;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION get_count_games_player(play_name TEXT)
+RETURNS INTEGER
+AS $$
+DECLARE
+    play_id INTEGER;
+    count_games INTEGER;
+BEGIN
+    SELECT id INTO play_id FROM players WHERE player_name = play_name;
+    SELECT count(*) INTO count_games FROM score_history WHERE player_id = play_id;
+    RETURN count_games;
+END;
+$$ LANGUAGE plpgsql;
+
