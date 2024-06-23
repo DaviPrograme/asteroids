@@ -8,7 +8,7 @@ from classes.Asteroid import Asteroid
 from classes.Screen import Screen
 from classes.Text import Text
 sys.path.append(os.path.abspath(os.path.dirname(__file__)) + "/../../")
-from backend.db.query import table_insert, table_upsert, is_player_highest_score, insert_new_player_highest_score, achievements_selection
+from backend.db.query import update_db
 
 class Game():
     def __init__(self):
@@ -92,17 +92,6 @@ class Game():
             self._dt = self._clock.tick(60) / 1000
         print(f"Game Over! Your score was: {self._score}")
         self._screen.render([Text(f"Game Over! Your score was: {self._score}", 400, 300)])
-        self.update_db()
+        update_db(self._player_name, self._score)
         sleep(5)
         sys.exit()
-
-    def update_db(self):
-        """update_db 
-            Método que atualiza o banco de dados
-            :param self: Classe Game
-        """
-        table_insert('players', 'player_name', f"'{self._player_name}'")
-        table_insert('score_history', 'player_id, score, date', f"(SELECT id FROM players WHERE player_name = '{self._player_name}' ORDER BY id DESC LIMIT 1), {self._score}, CURRENT_TIMESTAMP")
-        if is_player_highest_score(self._player_name, self._score):
-            insert_new_player_highest_score(self._player_name, self._score)
-        achievements_selection(self._player_name, self._score)

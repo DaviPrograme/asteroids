@@ -1,6 +1,6 @@
 import psycopg
 from db.query import achievements_selection, build_create_achievements_table, build_high_scores_table, build_player_table, build_player_achievements_table, build_score_history_table
-from db.query import populate_achievements
+from db.query import populate_achievements, create_procedures_db
 # Dados de conexão
 host = "localhost"
 port = "9090"
@@ -35,6 +35,7 @@ if __name__ == "__main__":
         build_create_achievements_table(cursor)
         build_player_achievements_table(cursor)
         populate_achievements(cursor)
+        create_procedures_db(cursor)
         cursor.close()
         conn.close()
         print("Conexão ao PostgreSQL fechada.")
