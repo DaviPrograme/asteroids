@@ -131,28 +131,6 @@ def table_insert(table_name, columns, values):
     conn.close()
 
 
-# def count_games_player(player_name):
-#     """count_games_player
-#         Método que conta os jogos de um jogador
-#         :param player_name: Nome do jogador
-#     """
-#     conn = psycopg.connect(
-#         dbname=dbname,
-#         user=user,
-#         password=password,
-#         host=host,
-#         port=port
-#     )
-#     conn.autocommit = True
-#     cursor = conn.cursor()
-#     query = f"""select count(*) from score_history as s join players as p on (s.player_id = p.id) where player_name = '{player_name}'"""
-#     cursor.execute(query)
-#     row = cursor.fetchone()
-#     cursor.close()
-#     conn.close()
-#     return row[0]
-
-
 def highest_score_all(score):
     """highest_score_all
         Método que verifica se a pontuação é a maior
