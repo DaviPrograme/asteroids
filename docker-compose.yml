@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    build: 
+      context: .
+      dockerfile: Dockerfile.postgres
+    container_name: postgres
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    networks:
+      - asteroids
+    volumes:
+      - asteroids_data:/var/lib/postgresql/data
+
+  # airbyte:
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile.airbyte
+  #   container_name: airbyte
+  #   ports:
+  #     - "8000:8000"
+  #   networks:
+  #     - asteroids
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     - AIRBYTE_ROLE=admin
+  #     - AIRBYTE_WEBAPP_URL=http://localhost:8000
+  #     - AIRBYTE_DATABASE_USER=airbyte
+  #     - AIRBYTE_DATABASE_PASSWORD=airbytepass
+  #     - AIRBYTE_DATABASE_HOST=postgres
+  #     - AIRBYTE_DATABASE_PORT=5432
+  #     - AIRBYTE_DATABASE_DB=asteroid
+
+  airbyte-server:
+    image: airbyte/server:latest
+    container_name: airbyte-server
+    ports:
+      - "8000:8000"
+    networks:
+      - asteroids
+    depends_on:
+      - postgres
+    environment:
+      - AIRBYTE_ROLE=admin
+      - AIRBYTE_WEBAPP_URL=http://localhost:8000
+      - AIRBYTE_DATABASE_USER=airbyte
+      - AIRBYTE_DATABASE_PASSWORD=airbytepass
+      - AIRBYTE_DATABASE_HOST=postgres
+      - AIRBYTE_DATABASE_PORT=5432
+      - AIRBYTE_DATABASE_DB=asteroid
+
+
+  airbyte-webapp:
+    image: airbyte/webapp:latest
+    container_name: airbyte-webapp
+    ports:
+      - "3000:3000"
+    networks:
+      - asteroids
+    depends_on:
+      - airbyte-server
+    environment:
+      - AIRBYTE_ROLE=webapp
+      - AIRBYTE_SERVER_HOST=airbyte-server
+      - AIRBYTE_SERVER_PORT=8000
+
+
+
+  clickhouse:
+    build: 
+      context: .
+      dockerfile: Dockerfile.clickhouse
+    container_name: clickhouse
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    networks:
+      - asteroids
+
+  metabase:
+    build: 
+      context: .
+      dockerfile: Dockerfile.metabase
+    container_name: metabase
+    ports:
+      - "3000:3000"
+    networks:
+      - asteroids
+    depends_on:
+      - clickhouse
+
+networks:
+  asteroids:
+    driver: bridge
+
+volumes:
+  asteroids_data:
