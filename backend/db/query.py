@@ -1,5 +1,5 @@
 import psycopg as psycopg
-import backend.db.constants as const
+import db.constants as const
 
 host = "localhost"
 port = "9090"

@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:latest
+    # build: 
+    #   context: .
+    #   dockerfile: Dockerfile.postgres
+    container_name: asteroids_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: abcXecole42
+      POSTGRES_DB: asteroid
+    ports:
+      - "9090:5432"
+    networks:
+      - asteroids
+    volumes:
+      - asteroids_data:/var/lib/postgresql/data
+
+networks:
+  asteroids:
+    driver: bridge
+
+volumes:
+  asteroids_data:

@@ -7,8 +7,8 @@ from classes.Bullet import Bullet
 from classes.Asteroid import Asteroid
 from classes.Screen import Screen
 from classes.Text import Text
-sys.path.append(os.path.abspath(os.path.dirname(__file__)) + "/../../")
-from backend.db.query import update_db
+sys.path.append(os.path.abspath(os.path.dirname(__file__)) + "/../../backend/")
+from db.query import update_db
 
 class Game():
     def __init__(self):
