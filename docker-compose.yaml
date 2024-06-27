@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 
 networks:
@@ -10,16 +10,9 @@ services:
     container_name: metabase
     hostname: metabase
     volumes:
-      - /dev/urandom:/dev/random:ro
+      - ./services/metabase-plugins:/plugins
     ports:
       - 3000:3000
-    environment:
-      MB_DB_TYPE: clickhouse
-      # MB_DB_DBNAME: metabaseappdb
-      # MB_DB_PORT: 8123
-      # MB_DB_USER: default
-      # MB_DB_PASS: ''
-      # MB_DB_HOST: clickhouse
     networks:
       - network
     healthcheck:
