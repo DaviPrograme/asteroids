@@ -8,6 +8,10 @@ all:
 # sleep 3
 # python3 ./backend/backend.py
 
+init-submodule:
+	git submodule init
+	git submodule update
+
 run:
 	python ./frontend/frontend.py
 
