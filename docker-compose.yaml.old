@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:latest
+    # build: 
+    #   context: .
+    #   dockerfile: Dockerfile.postgres
+    container_name: asteroids_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: abcXecole42
+      POSTGRES_DB: asteroid
+    ports:
+      - "9090:5432"
+    networks:
+      - asteroids
+    volumes:
+      - asteroids_data:/var/lib/postgresql/data
+
+
+  clickhouse-server:
+    image: yandex/clickhouse-server
+    container_name: clickhouse-server
+    ports:
+      - "8123:8123"   # Porta para acesso HTTP ao ClickHouse
+
+  clickhouse-client:
+    image: yandex/clickhouse-client
+    container_name: clickhouse-client
+    depends_on:
+      - clickhouse-server
+    entrypoint: ["/bin/bash", "-c", "while ! nc -z clickhouse-server 8123; do sleep 1; done; clickhouse-client --host clickhouse-server"]
+    environment:
+      - CLICKHOUSE_URL=http://clickhouse-server:8123
+
+
+
+  metabase:
+    image: metabase/metabase
+    container_name: metabase
+    ports:
+      - "3000:3000"
+    networks:
+      - asteroids
+    volumes:
+      - metabase_data:/var/lib/metabase
+
+networks:
+  asteroids:
+    driver: bridge
+
+volumes:
+  asteroids_data:
+  clickhouse_data:
+  metabase_data:

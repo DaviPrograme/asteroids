@@ -1,27 +1,22 @@
-version: '3.8'
+version: '3'
 
-services:
-
-  postgres:
-    image: postgres:latest
-    # build: 
-    #   context: .
-    #   dockerfile: Dockerfile.postgres
-    container_name: asteroids_postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: abcXecole42
-      POSTGRES_DB: asteroid
-    ports:
-      - "9090:5432"
-    networks:
-      - asteroids
-    volumes:
-      - asteroids_data:/var/lib/postgresql/data
 
 networks:
-  asteroids:
+  network:
     driver: bridge
-
-volumes:
-  asteroids_data:
+services:
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    hostname: metabase
+    volumes:
+      - ./services/metabase-plugins:/plugins
+    ports:
+      - 3000:3000
+    networks:
+      - network
+    healthcheck:
+      test: curl --fail -I http://localhost:3000/api/health || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
