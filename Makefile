@@ -7,6 +7,7 @@ all:
 	docker-compose up -d
 	sleep 3
 	python3 ./backend/backend.py
+	./services/airbyte/src/run-ab-platform.sh
 
 init-submodule:
 	git submodule init
