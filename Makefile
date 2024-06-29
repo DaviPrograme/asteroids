@@ -6,7 +6,7 @@ NAME_CONTAINER=asteroids_postgres
 all:
 	docker-compose up -d
 	sleep 3
-	python3 ./backend/backend.py
+	python3 ./backend/postgres/backend.py
 	./services/airbyte/src/run-ab-platform.sh
 
 init-submodule:

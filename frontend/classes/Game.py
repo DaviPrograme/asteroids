@@ -7,7 +7,7 @@ from classes.Bullet import Bullet
 from classes.Asteroid import Asteroid
 from classes.Screen import Screen
 from classes.Text import Text
-sys.path.append(os.path.abspath(os.path.dirname(__file__)) + "/../../backend/")
+sys.path.append(os.path.abspath(os.path.dirname(__file__)) + "/../../backend/postgres")
 from db.query import update_db
 
 class Game():
