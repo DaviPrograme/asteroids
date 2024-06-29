@@ -5,8 +5,8 @@ NAME_CONTAINER=asteroids_postgres
 
 all:
 	docker-compose up -d
-# sleep 3
-# python3 ./backend/backend.py
+	sleep 3
+	python3 ./backend/backend.py
 
 init-submodule:
 	git submodule init

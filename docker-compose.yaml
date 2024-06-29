@@ -1,22 +1,56 @@
 version: '3'
 
 
-networks:
-  network:
-    driver: bridge
 services:
+  postgres:
+    image: postgres:latest
+    # build: 
+    #   context: .
+    #   dockerfile: Dockerfile.postgres
+    container_name: asteroids_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: abcXecole42
+      POSTGRES_DB: asteroid
+    ports:
+      - "9090:5432"
+    networks:
+      - asteroids
+    volumes:
+      - asteroid_postgres:/var/lib/postgresql/data
+
+  clickhouse:
+    image: bitnami/clickhouse:latest
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+    networks:
+      - asteroids
+
   metabase:
     image: metabase/metabase:latest
     container_name: metabase
-    hostname: metabase
+    hostname: localhost
     volumes:
-      - ./services/metabase-plugins:/plugins
+      - ../../metabase-plugins:/plugins
+      # services/metabase-plugins/clickhouse.metabase-driver.jar
     ports:
       - 3000:3000
     networks:
-      - network
+      - asteroids
     healthcheck:
       test: curl --fail -I http://localhost:3000/api/health || exit 1
       interval: 15s
       timeout: 5s
       retries: 5
+
+volumes:
+  asteroid_postgres:
+    name: postgres_volume
+
+networks:
+  asteroids:
+    driver: bridge

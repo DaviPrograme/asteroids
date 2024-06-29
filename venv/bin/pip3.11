@@ -1,4 +1,4 @@
-#!/home/user/Desktop/ast_42/venv/bin/python
+#!/home/user/Desktop/asteroids/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
