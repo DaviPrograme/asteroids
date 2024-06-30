@@ -12,6 +12,8 @@ all:
 init-submodule:
 	git submodule init
 	git submodule update
+	source ./venv/bin/activate
+	pip3 install -r requirements.txt
 
 run:
 	python ./frontend/frontend.py
@@ -20,11 +22,12 @@ access_db:
 	docker exec -it $(NAME_CONTAINER) psql -U $(USER_DB) -d $(NAME_DB)
 
 clean:
-	docker stop $(NAME_CONTAINER)
+	docker-compose down
+	(cd ./services/airbyte/src ; docker-compose down)
 
-fclean: 
-	docker-compose down -v
-	docker rmi $(docker images -q)
+fclean: clean
+	docker container prune -f
+	@docker rmi -f $(shell docker images -q)
 
 
 re: fclean all
