@@ -9,9 +9,10 @@ all:
 	python3 ./backend/postgres/backend.py
 	./services/airbyte/src/run-ab-platform.sh
 
-init-submodule:
+init:
 	git submodule init
 	git submodule update
+	python3 -m venv venv
 	source ./venv/bin/activate
 	pip3 install -r requirements.txt
 
@@ -32,4 +33,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all run access_db clean fclean re
+.PHONY: all init run access_db clean fclean re
