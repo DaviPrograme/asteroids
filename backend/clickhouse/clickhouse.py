@@ -7,18 +7,19 @@ username = 'default'
 password = ''
 
 permissions_queries = [
-    "GRANT CREATE ON * TO airbyte_user;",
-    "GRANT CREATE ON default * TO airbyte_user;",
-    "GRANT DROP ON * TO airbyte_user;",
-    "GRANT TRUNCATE ON * TO airbyte_user;",
-    "GRANT INSERT ON * TO airbyte_user;",
-    "GRANT SELECT ON * TO airbyte_user;",
+    "CREATE USER airbyte_user IDENTIFIED BY 'sua_senha_segura';",
+    "GRANT CREATE ON *.* TO airbyte_user;",
+    "GRANT CREATE ON default.* TO airbyte_user;",
+    "GRANT DROP ON *.* TO airbyte_user;",
+    "GRANT TRUNCATE ON *.* TO airbyte_user;",
+    "GRANT INSERT ON *.* TO airbyte_user;",
+    "GRANT SELECT ON *.* TO airbyte_user;",
     "GRANT CREATE DATABASE ON airbyte_internal.* TO airbyte_user;",
     "GRANT CREATE TABLE ON airbyte_internal.* TO airbyte_user;",
     "GRANT DROP ON airbyte_internal.* TO airbyte_user;",
     "GRANT TRUNCATE ON airbyte_internal.* TO airbyte_user;",
     "GRANT INSERT ON airbyte_internal.* TO airbyte_user;",
-    "GRANT SELECT ON airbyte_internal.* TO airbyte_user;"
+    "GRANT SELECT ON airbyte_internal.* TO airbyte_user;",
 ]
 
 # Comando SQL para criar a tabela
@@ -103,8 +104,8 @@ try:
         client.execute(permission)
 
     # Executar o comando para criar a tabela
-    for create_table_query in create_table_queries:
-        client.execute(create_table_query)
+    # for create_table_query in create_table_queries:
+    #     client.execute(create_table_query)
 
     # Verificar se a criação da tabela foi bem-sucedida
     print("Tabela 'players' criada com sucesso!")

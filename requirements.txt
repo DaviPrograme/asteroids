@@ -2,3 +2,4 @@ pygame
 pygame-menu
 psycopg
 clickhouse-driver
+requests

@@ -29,7 +29,7 @@ clean:
 fclean: clean
 	docker container prune -f
 	@docker rmi -f $(shell docker images -q)
-
+	@docker volume rm -f $(shell docker volume ls -q)
 
 re: fclean all
 
