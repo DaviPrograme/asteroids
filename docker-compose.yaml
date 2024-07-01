@@ -35,7 +35,7 @@ services:
     container_name: metabase
     hostname: localhost
     volumes:
-      - ../../metabase-plugins:/plugins
+      - ./services/metabase-plugins:/plugins
       # services/metabase-plugins/clickhouse.metabase-driver.jar
     ports:
       - 3000:3000
