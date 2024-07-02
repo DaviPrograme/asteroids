@@ -108,7 +108,7 @@ Nesta última parte do projeto criamos um sistema ETL (Extract, Transform, Load)
     user: airbyte
     password: password
     ```
-    ##### Siga os passos abaixo:
+    ##### Acessando o Airbyte, a tela inicial sera simiilar a tela abaixo. Clique no botão "***Create your first connection***". Caso você tenha seguido os passos até aqui sem nenhum tipo de erro, o Airbyte vai apresentar que já existe um conector para o PostgreSQL e um para o ClickHouse, então é só seleciona-los na ordem que vai ser apresentado e ir seguuindo para o próximo passo.
     ![](/readme/airbyte_cropped)
 
     #### no fim, sua tela deve estar parecida com esta:
