@@ -21,8 +21,11 @@ O objetivo principal deste projeto é dividido igualmente entre aprender Python 
 
 ### Backend
 
-- **Banco de Dados**
+- **Gerenciamento de Dados**
     - Use `psycopg2` para gerenciar a interação com o banco de dados PostgreSQL. Garanta que as pontuações e outras informações do jogo sejam armazenadas e recuperadas de forma eficiente.
+    - Extrair os dados do PostgreSQL utilizando a ferramenta Airbyte, que gerencia a extração e carregamento de dados através de conectores.
+    - Transformar os dados de um Banco na ferramenta ClickHouse onde os dados ja foram previamente carregados pelo Airbyte.
+    - Analisar e apresentar dados e pesquisas utilizando a ferramenta Metabase que permite criar gráficos analíticos.
 
 ### Banco de dados
 
@@ -33,11 +36,94 @@ O objetivo principal deste projeto é dividido igualmente entre aprender Python 
         - **score_history (id, player_id, score, date):** Registra os históricos de pontuações mais altas para cada jogador.
         - **achievements (id, achievement_name, description):** Armazena diferentes conquistas que os jogadores podem ganhar.
         - **player_achievements (player_id, achievement_id, date_earned):** Registra quais conquistas cada jogador ganhou e quando.
+- **ClickHouse**
+    - O ClickHouse é um sistema de gerenciamento de banco de dados SQL orientado a colunas e de alto desempenho para processamento analítico online.
+    - Utilizamos para receber e tratar os dados que são extraídos do PostgreSQL
+    - Ao invés de tabelas criamos view para conseguir lidar com esses dados de forma mais eficaz no próximo passo.
 
-### Implantação
+### Ferramentas
+- **Airbyte**
+    - Plataforma de integração de dados
+    - Esta ferramenta nos ajuda a conectar o Banco de Dados PostgreSQL ao Banco de Dados ClickHouse
+
+- **Metabase**
+    - Ferramenta de relatórios e BI que permite criar relatórios e dashboards.
+    - Com esta ferramenta analisamos dados como:
+        - ***Gráfico de barras***: Jogadores com as maiores pontuações em ordem decrescente.
+        - ***Gráfico de dispersão***: Pontuações em diferentes datas.
+        - ***Gráfico de barras***: Quantidade de conquistas por jogador.
+        - ***Gráfico de barras***: Pontuação média de cada jogador em ordem decrescente.
+
+### Expansão
+#### Fizemos a implentação de um etl em nosso banco de dados
+- ETL (Extract, Transform, Load) é um processo de integração de dados que envolve três etapas principais: extrair dados de várias fontes, transformá-los para atender às necessidades de negócios ou formatos específicos e carregá-los em um sistema de destino, como um data warehouse. O propósito do ETL é consolidar dados dispersos, garantir a qualidade dos dados e facilitar a análise e a tomada de decisões.
+
+
+### Implementação
 
 - **Setup**
-    - Configure uma maneira fácil de executar o projeto localmente com os scripts necessários para configurar o projeto.
+    - Toda da estrutura de dados do projeto roda em sistemas dockerizados, para executar o projeto será necessário ter o docker e docker-compose instalados.
+    - Passo 1: Clonar o repositório
+    ```bash
+    git clone https://github.com/DaviPrograme/asteroids.git
+    ``` 
+    - Passo 2: Iniciar Submodules e criar a venv python
+    ```bash
+    make init
+    ```
+    - Passo 3: Acessar a venv
+    ```bash
+    source ./venv/bin/activate && pip install -r requirements.txt
+    ```
+    - Passo 4: Inicializar todos os Contêiners
+    ```bash
+    make
+    ```
+    - Passo 5: Inicializar o PostgreSQL
+    ```bash
+    python backend/postgres/backend.py
+    ```
+    - Passo 6: Criar os conectores no Airbyte(a conexão será manual pela plataforma)
+    ```bash
+    python services/airbyte/create_connection.py
+    ```
+    - Passo 7: Criar os conectores no Airbyte(a conexão será manual pela plataforma)
+    ```url
+    acesse em seu navegador: localhost:8000
+    user: airbyte
+    password: password
+    ```
+    ##### Siga os passos abaixo:
+    ![](airbyte_cropped)
+
+    #### no fim, sua tela deve estar parecida com esta:
+    
+    ![](airbyte_finish.png)
+    - Caso tenha DBeaver instalado o clickhouse tera o banco "airbyte_internal"
+    ![](dbv_internal.png)
+
+    - Passo 8: Inicializar o ClickHouse. Este script gera as views necessárias para a visualização no Metabase
+
+    ```bash
+    python backend/clickhouse/clickhouse.py
+    ```
+    ![](views.png)
+
+    - Passo 9: Acessar o Metabase
+    ```
+    acesse: localhost:3000
+    siga os passos iniciais
+    em seguida garanta que esta tela tenha os mesmos dados: 
+    ```
+    ![](metabase.png)
+
+    - Passo 10: Inicializar o Jogo. Isso serve para gerar dados (e se divertir um pouco)
+    ```bash
+    python frontend/frontend.py
+    ```
+
+    ##### Ultimo Passo
+    - Montar alguns gráficos no Metabase
 
 ### Adicionais
 
