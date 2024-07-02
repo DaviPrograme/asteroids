@@ -1,5 +1,24 @@
 # Asteroids
 
+## Estrutura do Projeto
+
+Este projeto foi divido em duas partes:
+
+- A 1ª Parte tem como objetivo recriar o jogo asteroids e conecta-lo a um banco de dados PostgreSQL;
+
+- A 2ª Parte é construir um sistema de [ETL](https://pt.wikipedia.org/wiki/Extract,_transform,_load) com as infoormações coletadas através do jogo.
+
+## Tecnologias:
+- [Python](https://www.python.org/);
+- [Docker](https://www.docker.com/products/docker-hub/);
+- [Docker Compose](https://docs.docker.com/compose/);
+- [PostgreSQL](https://www.postgresql.org/);
+- [Airbyte](https://airbyte.com/);
+- [ClickHouse](https://clickhouse.com/);
+- [Metabase](https://www.metabase.com/).
+
+## 1ª PARTE:
+
 Recrie o clássico jogo [Asteroids](https://en.wikipedia.org/wiki/Asteroids_(video_game)) usando Python para o frontend e backend e PostgreSQL para armazenar as informações. O jogo incluirá funcionalidades básicas como controle da nave espacial, movimento dos asteroides, detecção de colisões, contagem de pontos, conquistas dos jogadores e um histórico de pontuações. Os dados do jogo, como pontuações mais altas, serão armazenados em um banco de dados PostgreSQL.
 
 ![Asteroids Photo](./readme/asteroids.gif)
@@ -21,14 +40,6 @@ O objetivo principal deste projeto é dividido igualmente entre aprender Python 
 
 ### Backend
 
-- **Gerenciamento de Dados**
-    - Use `psycopg2` para gerenciar a interação com o banco de dados PostgreSQL. Garanta que as pontuações e outras informações do jogo sejam armazenadas e recuperadas de forma eficiente.
-    - Extrair os dados do PostgreSQL utilizando a ferramenta Airbyte, que gerencia a extração e carregamento de dados através de conectores.
-    - Transformar os dados de um Banco na ferramenta ClickHouse onde os dados ja foram previamente carregados pelo Airbyte.
-    - Analisar e apresentar dados e pesquisas utilizando a ferramenta Metabase que permite criar gráficos analíticos.
-
-### Banco de dados
-
 - **PostgreSQL**
     - Crie um schema de banco de dados no PostgreSQL para armazenar as informações do jogo. Tabelas necessárias:
         - **players (id, player_name):** Armazena informações sobre cada jogador.
@@ -36,15 +47,23 @@ O objetivo principal deste projeto é dividido igualmente entre aprender Python 
         - **score_history (id, player_id, score, date):** Registra os históricos de pontuações mais altas para cada jogador.
         - **achievements (id, achievement_name, description):** Armazena diferentes conquistas que os jogadores podem ganhar.
         - **player_achievements (player_id, achievement_id, date_earned):** Registra quais conquistas cada jogador ganhou e quando.
-- **ClickHouse**
-    - O ClickHouse é um sistema de gerenciamento de banco de dados SQL orientado a colunas e de alto desempenho para processamento analítico online.
-    - Utilizamos para receber e tratar os dados que são extraídos do PostgreSQL
-    - Ao invés de tabelas criamos view para conseguir lidar com esses dados de forma mais eficaz no próximo passo.
+     
 
-### Ferramentas
+
+## 2ª PARTE:
+
+Nesta última parte do projeto criamos um sistema ETL (Extract, Transform, Load), que é um processo de integração de dados que envolve três etapas principais: extrair dados de várias fontes, transformá-los para atender às necessidades de negócios ou formatos específicos e carregá-los em um sistema de destino, como um data warehouse. O propósito do ETL é consolidar dados dispersos, garantir a qualidade dos dados e facilitar a análise e a tomada de decisões. Para a construção de tal sistema, utilizamos as seguiintes ferramentas:
+
 - **Airbyte**
     - Plataforma de integração de dados
     - Esta ferramenta nos ajuda a conectar o Banco de Dados PostgreSQL ao Banco de Dados ClickHouse
+
+
+- **ClickHouse**
+    - O ClickHouse é um sistema de gerenciamento de banco de dados SQL orientado a colunas e de alto desempenho para processamento analítico online.
+    - Utilizamos para receber e tratar os dados que são extraídos do PostgreSQL
+    - Ao invés de tabelas criamos views para conseguir lidar com esses dados de forma mais eficaz no próximo passo.
+ 
 
 - **Metabase**
     - Ferramenta de relatórios e BI que permite criar relatórios e dashboards.
@@ -53,10 +72,6 @@ O objetivo principal deste projeto é dividido igualmente entre aprender Python 
         - ***Gráfico de dispersão***: Pontuações em diferentes datas.
         - ***Gráfico de barras***: Quantidade de conquistas por jogador.
         - ***Gráfico de barras***: Pontuação média de cada jogador em ordem decrescente.
-
-### Expansão
-#### Fizemos a implentação de um etl em nosso banco de dados
-- ETL (Extract, Transform, Load) é um processo de integração de dados que envolve três etapas principais: extrair dados de várias fontes, transformá-los para atender às necessidades de negócios ou formatos específicos e carregá-los em um sistema de destino, como um data warehouse. O propósito do ETL é consolidar dados dispersos, garantir a qualidade dos dados e facilitar a análise e a tomada de decisões.
 
 
 ### Implementação
@@ -125,8 +140,3 @@ O objetivo principal deste projeto é dividido igualmente entre aprender Python 
     ##### Ultimo Passo
     - Montar alguns gráficos no Metabase
 
-### Adicionais
-
-- **Segurança:** Garanta que todos os inputs do jogador sejam sanitizados e seguros.
-- **Flexibilidade:** Você pode precisar tomar decisões sobre features/detalhes adicionais, componentes da UI ou otimizações necessárias para melhorar o jogo.
-- **Persistência de dados:** Garanta que as pontuações e os dados do jogo sejam armazenados de forma persistente no PostgreSQL e possam ser recuperados de maneira eficiente.
