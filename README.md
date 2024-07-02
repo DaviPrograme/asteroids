@@ -2,7 +2,7 @@
 
 Recrie o clássico jogo [Asteroids](https://en.wikipedia.org/wiki/Asteroids_(video_game)) usando Python para o frontend e backend e PostgreSQL para armazenar as informações. O jogo incluirá funcionalidades básicas como controle da nave espacial, movimento dos asteroides, detecção de colisões, contagem de pontos, conquistas dos jogadores e um histórico de pontuações. Os dados do jogo, como pontuações mais altas, serão armazenados em um banco de dados PostgreSQL.
 
-![Asteroids Photo](./asteroids.gif)
+![Asteroids Photo](./readme/asteroids.gif)
 
 ## Objetivo
 
@@ -94,20 +94,20 @@ O objetivo principal deste projeto é dividido igualmente entre aprender Python 
     password: password
     ```
     ##### Siga os passos abaixo:
-    ![](airbyte_cropped)
+    ![](/readme/airbyte_cropped)
 
     #### no fim, sua tela deve estar parecida com esta:
     
-    ![](airbyte_finish.png)
+    ![](/readme/airbyte_finish.png)
     - Caso tenha DBeaver instalado o clickhouse tera o banco "airbyte_internal"
-    ![](dbv_internal.png)
+    ![](/readme/dbv_internal.png)
 
     - Passo 8: Inicializar o ClickHouse. Este script gera as views necessárias para a visualização no Metabase
 
     ```bash
     python backend/clickhouse/clickhouse.py
     ```
-    ![](views.png)
+    ![](/readme/views.png)
 
     - Passo 9: Acessar o Metabase
     ```
@@ -115,7 +115,7 @@ O objetivo principal deste projeto é dividido igualmente entre aprender Python 
     siga os passos iniciais
     em seguida garanta que esta tela tenha os mesmos dados: 
     ```
-    ![](metabase.png)
+    ![](./readme/metabase.png)
 
     - Passo 10: Inicializar o Jogo. Isso serve para gerar dados (e se divertir um pouco)
     ```bash
