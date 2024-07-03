@@ -6,7 +6,7 @@ Este projeto foi divido em duas partes:
 
 - A 1ª Parte tem como objetivo recriar o jogo asteroids e conecta-lo a um banco de dados PostgreSQL;
 
-- A 2ª Parte é construir um sistema de [ETL](https://pt.wikipedia.org/wiki/Extract,_transform,_load) com as infoormações coletadas através do jogo.
+- A 2ª Parte é construir um sistema de [ETL](https://pt.wikipedia.org/wiki/Extract,_transform,_load) com as informações coletadas através do jogo.
 
 ## Tecnologias:
 - [Python](https://www.python.org/);
