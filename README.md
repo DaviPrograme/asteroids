@@ -10,6 +10,7 @@ Este projeto foi divido em duas partes:
 
 ## Tecnologias:
 - [Python](https://www.python.org/);
+- [Makefile](https://www.gnu.org/software/make/manual/make.html)
 - [Docker](https://www.docker.com/products/docker-hub/);
 - [Docker Compose](https://docs.docker.com/compose/);
 - [PostgreSQL](https://www.postgresql.org/);
